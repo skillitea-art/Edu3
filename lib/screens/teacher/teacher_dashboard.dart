@@ -12,6 +12,7 @@ import '../../services/firestore_service.dart';
 import '../../services/update_service.dart';
 import '../auth/login_screen.dart';
 import '../common/class_hub_screen.dart';
+import '../common/test_practice_screen.dart';
 import '../../widgets/custom_chart.dart';
 import 'create_tuition_screen.dart';
 
@@ -77,6 +78,16 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
             onTap: () {
               Navigator.of(context).pop();
               checkForUpdate(context);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.quiz_outlined),
+            title: const Text('Test Practice'),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const TestPracticeScreen()),
+              );
             },
           ),
           ListTile(
