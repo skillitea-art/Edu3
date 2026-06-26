@@ -15,16 +15,20 @@ PROJECT_DIR="/workspaces/Edu3"
 echo ""
 echo "Checking Java..."
 
-if [ -d "/usr/local/sdkman/candidates/java/current" ]; then
+if [ -d "/usr/local/sdkman/candidates/java/21.0.10-ms" ]; then
+    export JAVA_HOME="/usr/local/sdkman/candidates/java/21.0.10-ms"
+
+elif [ -d "/usr/local/sdkman/candidates/java/current" ]; then
     export JAVA_HOME="/usr/local/sdkman/candidates/java/current"
-elif [ -d "/usr/lib/jvm/java-21-openjdk-amd64" ]; then
-    export JAVA_HOME="/usr/lib/jvm/java-21-openjdk-amd64"
+
 else
     echo "❌ Java not found"
     exit 1
 fi
 
 export PATH="$JAVA_HOME/bin:$PATH"
+
+hash -r
 
 java -version
 
@@ -49,7 +53,6 @@ fi
 export PATH="$HOME/flutter/bin:$PATH"
 
 flutter --version
-
 #############################################
 # ANDROID SDK
 #############################################
@@ -59,28 +62,30 @@ echo "Checking Android SDK..."
 
 export ANDROID_HOME="$HOME/android-sdk"
 export ANDROID_SDK_ROOT="$HOME/android-sdk"
+export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 
-if [ ! -d "$ANDROID_HOME" ]; then
+if [ ! -d "$ANDROID_HOME/cmdline-tools/latest" ]; then
 
     echo "Installing Android SDK..."
 
     mkdir -p "$ANDROID_HOME"
-
     cd "$ANDROID_HOME"
 
     wget -q https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip
 
     unzip -q commandlinetools-linux-13114758_latest.zip
 
-    mkdir -p cmdline-tools/latest
+    mkdir -p cmdline-tools
 
-    mv cmdline-tools/* cmdline-tools/latest/
+    mv cmdline-tools latest-temp || true
 
-    rm commandlinetools-linux-13114758_latest.zip
+    mkdir -p cmdline-tools
+
+    mv latest-temp cmdline-tools/latest || true
+
+    rm -f commandlinetools-linux-13114758_latest.zip
 
 fi
-
-export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
 
 yes | sdkmanager --licenses >/dev/null
 

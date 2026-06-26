@@ -11,8 +11,19 @@ echo "🚀 Edu3 Release Builder"
 echo "========================================"
 
 # Java
-export JAVA_HOME=/usr/local/sdkman/candidates/java/current
+# Java
+if [ -d "/usr/local/sdkman/candidates/java/21.0.10-ms" ]; then
+    export JAVA_HOME="/usr/local/sdkman/candidates/java/21.0.10-ms"
+else
+    export JAVA_HOME="/usr/local/sdkman/candidates/java/current"
+fi
+
 export PATH="$JAVA_HOME/bin:$PATH"
+
+hash -r
+
+echo "Using Java:"
+java -version
 
 # Flutter
 if [ -d "$HOME/flutter" ]; then
