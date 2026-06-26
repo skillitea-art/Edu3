@@ -12,13 +12,16 @@ echo "========================================"
 
 # Java
 # Java
-if [ -d "/usr/local/sdkman/candidates/java/21.0.10-ms" ]; then
-    export JAVA_HOME="/usr/local/sdkman/candidates/java/21.0.10-ms"
-else
-    export JAVA_HOME="/usr/local/sdkman/candidates/java/current"
-fi
+# Java
+JAVA_BIN=$(which java)
 
+export JAVA_HOME=$(dirname $(dirname $(readlink -f "$JAVA_BIN")))
 export PATH="$JAVA_HOME/bin:$PATH"
+
+hash -r
+
+echo "Using Java:"
+java -version
 
 hash -r
 
