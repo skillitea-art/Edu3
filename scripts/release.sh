@@ -69,10 +69,11 @@ echo "Building Release APK..."
 
 cd android
 
-./gradlew --no-daemon \
--Dorg.gradle.jvmargs="-Xmx2g -XX:MaxMetaspaceSize=512m" \
+./gradlew \
+--no-daemon \
+--stacktrace \
+-Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g -Dkotlin.daemon.jvm.options=-Xmx2g" \
 assembleRelease
-
 cd ..
 
 mkdir -p release
