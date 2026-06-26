@@ -13,11 +13,11 @@ class HomeworkDetailsScreen extends StatefulWidget {
   final String teacherName;
 
   const HomeworkDetailsScreen({
-    Key? key,
+    super.key,
     required this.task,
     required this.className,
     required this.teacherName,
-  }) : super(key: key);
+  });
 
   @override
   State<HomeworkDetailsScreen> createState() => _HomeworkDetailsScreenState();
@@ -150,7 +150,7 @@ class _HomeworkDetailsScreenState extends State<HomeworkDetailsScreen> {
                     borderRadius: BorderRadius.circular(16),
                     side: BorderSide(
                       color: isDark
-                          ? Colors.white.withOpacity(0.05)
+                          ? Colors.white.withValues(alpha: 0.05)
                           : Colors.grey.shade100,
                     ),
                   ),
@@ -168,7 +168,7 @@ class _HomeworkDetailsScreenState extends State<HomeworkDetailsScreen> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: AppTheme.primaryColor.withOpacity(0.12),
+                                color: AppTheme.primaryColor.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
@@ -186,7 +186,7 @@ class _HomeworkDetailsScreenState extends State<HomeworkDetailsScreen> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: statusColor.withOpacity(0.12),
+                                color: statusColor.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
@@ -287,7 +287,7 @@ class _HomeworkDetailsScreenState extends State<HomeworkDetailsScreen> {
                     borderRadius: BorderRadius.circular(16),
                     side: BorderSide(
                       color: isDark
-                          ? Colors.white.withOpacity(0.05)
+                          ? Colors.white.withValues(alpha: 0.05)
                           : Colors.grey.shade100,
                     ),
                   ),
@@ -327,7 +327,7 @@ class _HomeworkDetailsScreenState extends State<HomeworkDetailsScreen> {
                       borderRadius: BorderRadius.circular(16),
                       side: BorderSide(
                         color: isDark
-                            ? Colors.white.withOpacity(0.05)
+                            ? Colors.white.withValues(alpha: 0.05)
                             : Colors.grey.shade100,
                       ),
                     ),
@@ -372,7 +372,7 @@ class _HomeworkDetailsScreenState extends State<HomeworkDetailsScreen> {
                       borderRadius: BorderRadius.circular(16),
                       side: BorderSide(
                         color: isDark
-                            ? Colors.white.withOpacity(0.05)
+                            ? Colors.white.withValues(alpha: 0.05)
                             : Colors.grey.shade100,
                       ),
                     ),
@@ -406,10 +406,10 @@ class _HomeworkDetailsScreenState extends State<HomeworkDetailsScreen> {
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: Colors.green.withOpacity(0.08),
+                                color: Colors.green.withValues(alpha: 0.08),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: Colors.green.withOpacity(0.2),
+                                  color: Colors.green.withValues(alpha: 0.2),
                                 ),
                               ),
                               child: Column(
@@ -442,10 +442,10 @@ class _HomeworkDetailsScreenState extends State<HomeworkDetailsScreen> {
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: Colors.orange.withOpacity(0.08),
+                                color: Colors.orange.withValues(alpha: 0.08),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: Colors.orange.withOpacity(0.2),
+                                  color: Colors.orange.withValues(alpha: 0.2),
                                 ),
                               ),
                               child: const Row(
@@ -502,7 +502,7 @@ class _HomeworkDetailsScreenState extends State<HomeworkDetailsScreen> {
                       borderRadius: BorderRadius.circular(16),
                       side: BorderSide(
                         color: isDark
-                            ? Colors.white.withOpacity(0.05)
+                            ? Colors.white.withValues(alpha: 0.05)
                             : Colors.grey.shade100,
                       ),
                     ),

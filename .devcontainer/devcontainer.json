@@ -1,0 +1,22 @@
+{
+  "name": "Edu3 Production",
+
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+
+  "remoteUser": "vscode",
+
+  "postCreateCommand": "bash .devcontainer/postCreate.sh",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Dart-Code.flutter",
+        "Dart-Code.dart-code",
+        "ms-androidtools.vscode-android",
+        "GitHub.copilot"
+      ]
+    }
+  }
+}

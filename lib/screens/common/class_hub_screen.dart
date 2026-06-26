@@ -13,9 +13,9 @@ class ClassHubScreen extends StatefulWidget {
   final TuitionModel tuition;
 
   const ClassHubScreen({
-    Key? key,
+    super.key,
     required this.tuition,
-  }) : super(key: key);
+  });
 
   @override
   State<ClassHubScreen> createState() => _ClassHubScreenState();
@@ -30,7 +30,7 @@ class _ClassHubScreenState extends State<ClassHubScreen> with SingleTickerProvid
   
   // Attendance state
   DateTime _attendanceDate = DateTime.now();
-  Map<String, bool> _attendanceMap = {};
+  final Map<String, bool> _attendanceMap = {};
   bool _isSavingAttendance = false;
   
   // Homework state
@@ -507,7 +507,7 @@ class _ClassHubScreenState extends State<ClassHubScreen> with SingleTickerProvid
                       margin: const EdgeInsets.only(bottom: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+                        side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -517,7 +517,7 @@ class _ClassHubScreenState extends State<ClassHubScreen> with SingleTickerProvid
                             Row(
                               children: [
                                 CircleAvatar(
-                                  backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+                                  backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
                                   child: const Icon(Icons.person, color: AppTheme.primaryColor),
                                 ),
                                 const SizedBox(width: 12),
@@ -627,7 +627,7 @@ class _ClassHubScreenState extends State<ClassHubScreen> with SingleTickerProvid
                         margin: const EdgeInsets.only(bottom: 8),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+                          side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
                         ),
                         child: CheckboxListTile(
                           title: Text(
@@ -645,7 +645,7 @@ class _ClassHubScreenState extends State<ClassHubScreen> with SingleTickerProvid
                             });
                           },
                           secondary: CircleAvatar(
-                            backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+                            backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
                             child: Text(name[0].toUpperCase(), style: const TextStyle(color: AppTheme.primaryColor)),
                           ),
                           activeColor: AppTheme.primaryColor,
@@ -738,7 +738,7 @@ class _ClassHubScreenState extends State<ClassHubScreen> with SingleTickerProvid
                 color: isDark ? const Color(0xFF1E293B) : Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+                  side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -787,7 +787,7 @@ class _ClassHubScreenState extends State<ClassHubScreen> with SingleTickerProvid
                       margin: const EdgeInsets.only(bottom: 8),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+                        side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
                       ),
                       child: ListTile(
                         leading: Icon(
@@ -804,7 +804,7 @@ class _ClassHubScreenState extends State<ClassHubScreen> with SingleTickerProvid
                         trailing: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: (wasPresent ? Colors.green : Colors.red).withOpacity(0.1),
+                            color: (wasPresent ? Colors.green : Colors.red).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -941,7 +941,7 @@ class _ClassHubScreenState extends State<ClassHubScreen> with SingleTickerProvid
                     margin: const EdgeInsets.only(bottom: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
-                      side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+                      side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
                     ),
                     child: ListTile(
                       title: Text(
@@ -1118,7 +1118,7 @@ class _ClassHubScreenState extends State<ClassHubScreen> with SingleTickerProvid
                                 if (isGraded)
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                                    decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
                                     child: Text('Grade: $grade', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
                                   )
                                 else
@@ -1250,7 +1250,7 @@ class _ClassHubScreenState extends State<ClassHubScreen> with SingleTickerProvid
                   if (isGraded) ...[
                     Container(
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+                      decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -1266,7 +1266,7 @@ class _ClassHubScreenState extends State<ClassHubScreen> with SingleTickerProvid
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.12),
+                        color: Colors.orange.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Row(
@@ -1386,11 +1386,11 @@ class _ClassHubScreenState extends State<ClassHubScreen> with SingleTickerProvid
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+                side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
               ),
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: AppTheme.secondaryColor.withOpacity(0.1),
+                  backgroundColor: AppTheme.secondaryColor.withValues(alpha: 0.1),
                   child: const Icon(Icons.star, color: AppTheme.secondaryColor),
                 ),
                 title: Text(
@@ -1442,11 +1442,11 @@ class _ClassHubScreenState extends State<ClassHubScreen> with SingleTickerProvid
                     margin: const EdgeInsets.only(bottom: 8),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+                      side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
                     ),
                     child: ListTile(
                       leading: CircleAvatar(
-                        backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+                        backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
                         child: Text(
                           name.isNotEmpty ? name[0].toUpperCase() : '?',
                           style: const TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold),

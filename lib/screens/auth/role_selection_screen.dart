@@ -4,7 +4,7 @@ import '../../providers/auth_provider.dart';
 import '../../core/theme/app_theme.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
-  const RoleSelectionScreen({Key? key}) : super(key: key);
+  const RoleSelectionScreen({super.key});
 
   Future<void> _selectRole(BuildContext context, String role) async {
     try {
@@ -99,13 +99,12 @@ class _PremiumRoleCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const _PremiumRoleCard({
-    Key? key,
     required this.icon,
     required this.title,
     required this.description,
     required this.gradient,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +115,7 @@ class _PremiumRoleCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(
-          color: isDark ? Colors.white.withOpacity(0.06) : Colors.grey.shade100,
+          color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.grey.shade100,
           width: 1,
         ),
       ),
@@ -136,7 +135,7 @@ class _PremiumRoleCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: gradient.colors.first.withOpacity(0.3),
+                      color: gradient.colors.first.withValues(alpha: 0.3),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),

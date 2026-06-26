@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 
 class NotificationsCenter extends StatelessWidget {
-  const NotificationsCenter({Key? key}) : super(key: key);
+  const NotificationsCenter({super.key});
 
   List<AppNotification> _getMockNotifications() {
     return [
@@ -122,7 +122,7 @@ class NotificationsCenter extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100,
         ),
       ),
       child: Padding(
@@ -134,7 +134,7 @@ class NotificationsCenter extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.12),
+                color: color.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: Icon(

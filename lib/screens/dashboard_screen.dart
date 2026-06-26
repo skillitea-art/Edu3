@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../core/theme/app_theme.dart';
-import './teacher/create_tuition_screen.dart';
-import './student/join_tuition_screen.dart';
-import './teacher/student_list_screen.dart';
-import './student/feedback_screen.dart';
 import './common/profile_screen.dart';
 import './common/notifications_center.dart';
 import './common/my_tuition_screen.dart';
@@ -15,7 +10,7 @@ import './auth/login_screen.dart';
 import '../services/update_service.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({Key? key}) : super(key: key);
+  const DashboardScreen({super.key});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -224,7 +219,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
                 child: Card(
                   elevation: 4,
-                  shadowColor: AppTheme.primaryColor.withOpacity(0.2),
+                  shadowColor: AppTheme.primaryColor.withValues(alpha: 0.2),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -236,7 +231,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         end: Alignment.bottomRight,
                         colors: [
                           Colors.white,
-                          AppTheme.primaryColor.withOpacity(0.05),
+                          AppTheme.primaryColor.withValues(alpha: 0.05),
                         ],
                       ),
                     ),
@@ -392,7 +387,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   }) {
     return Card(
       elevation: 3,
-      shadowColor: Colors.black.withOpacity(0.08),
+      shadowColor: Colors.black.withValues(alpha: 0.08),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -408,8 +403,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  gradient.colors.first.withOpacity(0.12),
-                  gradient.colors.last.withOpacity(0.04),
+                  gradient.colors.first.withValues(alpha: 0.12),
+                  gradient.colors.last.withValues(alpha: 0.04),
                 ],
               ),
             ),
@@ -426,7 +421,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: gradient.colors.first.withOpacity(0.3),
+                          color: gradient.colors.first.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 3),
                         ),

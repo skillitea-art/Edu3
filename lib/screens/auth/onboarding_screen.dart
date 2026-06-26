@@ -4,7 +4,7 @@ import '../../core/theme/app_theme.dart';
 import 'login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({Key? key}) : super(key: key);
+  const OnboardingScreen({super.key});
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -162,7 +162,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             width: 220,
             height: 220,
             decoration: BoxDecoration(
-              color: page.color.withOpacity(0.1),
+              color: page.color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -171,14 +171,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 height: 160,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [page.color, page.color.withOpacity(0.6)],
+                    colors: [page.color, page.color.withValues(alpha: 0.6)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: page.color.withOpacity(0.3),
+                      color: page.color.withValues(alpha: 0.3),
                       blurRadius: 16,
                       offset: const Offset(0, 8),
                     ),

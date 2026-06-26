@@ -7,7 +7,7 @@ import '../../widgets/custom_textfield.dart';
 import '../../widgets/custom_button.dart';
 
 class AddTaskScreen extends StatefulWidget {
-  const AddTaskScreen({Key? key}) : super(key: key);
+  const AddTaskScreen({super.key});
 
   @override
   State<AddTaskScreen> createState() => _AddTaskScreenState();

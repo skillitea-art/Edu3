@@ -16,7 +16,7 @@ import 'join_tuition_screen.dart';
 import 'homework_details_screen.dart';
 
 class StudentDashboard extends StatefulWidget {
-  const StudentDashboard({Key? key}) : super(key: key);
+  const StudentDashboard({super.key});
 
   @override
   State<StudentDashboard> createState() => _StudentDashboardState();
@@ -46,7 +46,7 @@ class _StudentDashboardState extends State<StudentDashboard> with TickerProvider
 
   // Notes diary state
   final _noteController = TextEditingController();
-  List<String> _notesList = [];
+  final List<String> _notesList = [];
 
   // Stream caching variables
   Stream<List<TuitionModel>>? _tuitionsStream;
@@ -379,7 +379,7 @@ class _StudentDashboardState extends State<StudentDashboard> with TickerProvider
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.primaryColor.withOpacity(0.2),
+                  color: AppTheme.primaryColor.withValues(alpha: 0.2),
                   blurRadius: 15,
                   offset: const Offset(0, 6),
                 ),
@@ -393,7 +393,7 @@ class _StudentDashboardState extends State<StudentDashboard> with TickerProvider
                     children: [
                       Text(
                         'Keep glowing,',
-                        style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14),
+                        style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 14),
                       ),
                       const SizedBox(height: 4),
                       Row(
@@ -415,7 +415,7 @@ class _StudentDashboardState extends State<StudentDashboard> with TickerProvider
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(30)),
+                            decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(30)),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -430,7 +430,7 @@ class _StudentDashboardState extends State<StudentDashboard> with TickerProvider
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(30)),
+                            decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(30)),
                             child: Text(
                               'Study: $_completedSessionsCount sessions',
                               style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
@@ -492,7 +492,7 @@ class _StudentDashboardState extends State<StudentDashboard> with TickerProvider
             color: isDark ? const Color(0xFF1E293B) : Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+              side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
             ),
             child: ListTile(
               leading: const Icon(Icons.sticky_note_2, color: AppTheme.secondaryColor),
@@ -513,13 +513,13 @@ class _StudentDashboardState extends State<StudentDashboard> with TickerProvider
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: color.withOpacity(0.12), shape: BoxShape.circle),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.12), shape: BoxShape.circle),
             child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(width: 14),
@@ -592,7 +592,7 @@ class _StudentDashboardState extends State<StudentDashboard> with TickerProvider
                           margin: const EdgeInsets.only(bottom: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+                            side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
                           ),
                           child: InkWell(
                             onTap: () {
@@ -615,7 +615,7 @@ class _StudentDashboardState extends State<StudentDashboard> with TickerProvider
                                       ),
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                        decoration: BoxDecoration(color: AppTheme.primaryColor.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+                                        decoration: BoxDecoration(color: AppTheme.primaryColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
                                         child: Text(
                                           tuition.subject,
                                           style: const TextStyle(color: AppTheme.primaryColor, fontSize: 11, fontWeight: FontWeight.bold),
@@ -731,7 +731,7 @@ class _StudentDashboardState extends State<StudentDashboard> with TickerProvider
                 fillColor: isDark ? const Color(0xFF1E293B) : Colors.white,
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade200),
+                  borderSide: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -919,7 +919,7 @@ class _StudentDashboardState extends State<StudentDashboard> with TickerProvider
                           margin: const EdgeInsets.only(bottom: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+                            side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
                           ),
                           child: InkWell(
                             onTap: () {
@@ -958,7 +958,7 @@ class _StudentDashboardState extends State<StudentDashboard> with TickerProvider
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                         decoration: BoxDecoration(
-                                          color: badgeColor.withOpacity(0.1),
+                                          color: badgeColor.withValues(alpha: 0.1),
                                           borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: Text(
@@ -1070,7 +1070,7 @@ class _StudentDashboardState extends State<StudentDashboard> with TickerProvider
                 child: CircularProgressIndicator(
                   value: percent,
                   strokeWidth: 10,
-                  backgroundColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade200,
+                  backgroundColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200,
                   valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
                 ),
               ),
@@ -1181,7 +1181,7 @@ class _StudentDashboardState extends State<StudentDashboard> with TickerProvider
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+                          side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
                         ),
                         child: ListTile(
                           title: Text(
@@ -1232,13 +1232,13 @@ class _StudentDashboardState extends State<StudentDashboard> with TickerProvider
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
-            side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+            side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
           ),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               color: unlocked 
-                  ? AppTheme.primaryColor.withOpacity(0.04) 
+                  ? AppTheme.primaryColor.withValues(alpha: 0.04) 
                   : Colors.transparent,
             ),
             padding: const EdgeInsets.all(16),
@@ -1306,7 +1306,7 @@ class _StudentDashboardState extends State<StudentDashboard> with TickerProvider
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
-              side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+              side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
             ),
             child: Padding(
               padding: const EdgeInsets.all(20.0),

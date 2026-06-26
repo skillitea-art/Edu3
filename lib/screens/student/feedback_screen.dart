@@ -6,7 +6,7 @@ import '../../services/firestore_service.dart';
 import '../../widgets/feedback_card.dart';
 
 class FeedbackScreen extends StatelessWidget {
-  const FeedbackScreen({Key? key}) : super(key: key);
+  const FeedbackScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

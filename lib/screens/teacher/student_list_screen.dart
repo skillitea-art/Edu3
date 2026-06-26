@@ -4,7 +4,7 @@ import '../../services/firestore_service.dart';
 import 'package:provider/provider.dart';
 
 class StudentListScreen extends StatelessWidget {
-  const StudentListScreen({Key? key}) : super(key: key);
+  const StudentListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

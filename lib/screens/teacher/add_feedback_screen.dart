@@ -8,7 +8,7 @@ import '../../widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 
 class AddFeedbackScreen extends StatefulWidget {
-  const AddFeedbackScreen({Key? key}) : super(key: key);
+  const AddFeedbackScreen({super.key});
 
   @override
   State<AddFeedbackScreen> createState() => _AddFeedbackScreenState();

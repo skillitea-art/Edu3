@@ -9,7 +9,7 @@ import '../../core/constants/app_constants.dart';
 import '../../core/utils/helpers.dart';
 
 class StudyTimerScreen extends StatefulWidget {
-  const StudyTimerScreen({Key? key}) : super(key: key);
+  const StudyTimerScreen({super.key});
 
   @override
   State<StudyTimerScreen> createState() => _StudyTimerScreenState();

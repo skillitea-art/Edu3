@@ -8,7 +8,7 @@ import '../../models/tuition_model.dart';
 import '../student/join_tuition_screen.dart';
 
 class MyTuitionScreen extends StatefulWidget {
-  const MyTuitionScreen({Key? key}) : super(key: key);
+  const MyTuitionScreen({super.key});
 
   @override
   State<MyTuitionScreen> createState() => _MyTuitionScreenState();
@@ -91,7 +91,7 @@ class _MyTuitionScreenState extends State<MyTuitionScreen> {
             Icon(
               Icons.school_outlined,
               size: 100,
-              color: AppTheme.textSecondary.withOpacity(0.5),
+              color: AppTheme.textSecondary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 24),
             const Text(
@@ -239,7 +239,7 @@ class _MyTuitionScreenState extends State<MyTuitionScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withOpacity(0.1),
+                color: AppTheme.primaryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: AppTheme.primaryColor,

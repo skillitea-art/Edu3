@@ -8,7 +8,7 @@ import '../teacher/teacher_dashboard.dart';
 import '../student/student_dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -219,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               width: 300,
               height: 300,
               decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withOpacity(isDark ? 0.15 : 0.08),
+                color: AppTheme.primaryColor.withValues(alpha: isDark ? 0.15 : 0.08),
                 shape: BoxShape.circle,
               ),
             ),
@@ -231,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               width: 250,
               height: 250,
               decoration: BoxDecoration(
-                color: AppTheme.secondaryColor.withOpacity(isDark ? 0.15 : 0.08),
+                color: AppTheme.secondaryColor.withValues(alpha: isDark ? 0.15 : 0.08),
                 shape: BoxShape.circle,
               ),
             ),
@@ -258,7 +258,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: AppTheme.primaryColor.withOpacity(0.2),
+                                color: AppTheme.primaryColor.withValues(alpha: 0.2),
                                 blurRadius: 12,
                                 offset: const Offset(0, 6),
                               ),
@@ -299,17 +299,17 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF1E293B).withOpacity(0.9) : Colors.white,
+                          color: isDark ? const Color(0xFF1E293B).withValues(alpha: 0.9) : Colors.white,
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+                              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
                           ],
                           border: Border.all(
-                            color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
+                            color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100,
                             width: 1,
                           ),
                         ),
@@ -575,13 +575,13 @@ class _RoleCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
         decoration: BoxDecoration(
           color: isSelected 
-              ? AppTheme.primaryColor.withOpacity(isDark ? 0.2 : 0.08)
-              : (isDark ? Colors.white.withOpacity(0.02) : Colors.grey.shade50),
+              ? AppTheme.primaryColor.withValues(alpha: isDark ? 0.2 : 0.08)
+              : (isDark ? Colors.white.withValues(alpha: 0.02) : Colors.grey.shade50),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected 
                 ? AppTheme.primaryColor 
-                : (isDark ? Colors.white.withOpacity(0.08) : Colors.grey.shade200),
+                : (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.grey.shade200),
             width: isSelected ? 2 : 1,
           ),
         ),

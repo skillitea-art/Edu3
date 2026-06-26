@@ -5,7 +5,7 @@ import '../../providers/tuition_provider.dart';
 import '../../core/theme/app_theme.dart';
 
 class CreateTuitionScreen extends StatefulWidget {
-  const CreateTuitionScreen({Key? key}) : super(key: key);
+  const CreateTuitionScreen({super.key});
 
   @override
   State<CreateTuitionScreen> createState() => _CreateTuitionScreenState();
@@ -81,7 +81,7 @@ class _CreateTuitionScreenState extends State<CreateTuitionScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryColor.withOpacity(0.1),
+                      color: AppTheme.primaryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: AppTheme.primaryColor,
@@ -279,7 +279,7 @@ class _CreateTuitionScreenState extends State<CreateTuitionScreen> {
                 
                 // Info Card
                 Card(
-                  color: AppTheme.primaryColor.withOpacity(0.1),
+                  color: AppTheme.primaryColor.withValues(alpha: 0.1),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

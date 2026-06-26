@@ -7,11 +7,11 @@ class CustomChart extends StatefulWidget {
   final String title;
 
   const CustomChart({
-    Key? key,
+    super.key,
     required this.values,
     required this.labels,
     this.title = 'Activity Overview',
-  }) : super(key: key);
+  });
 
   @override
   State<CustomChart> createState() => _CustomChartState();
@@ -50,7 +50,7 @@ class _CustomChartState extends State<CustomChart> with SingleTickerProviderStat
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100,
         ),
       ),
       child: Padding(
@@ -118,7 +118,7 @@ class _BarChartPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final linePaint = Paint()
-      ..color = isDark ? Colors.white.withOpacity(0.1) : Colors.grey.shade200
+      ..color = isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey.shade200
       ..strokeWidth = 1.0;
 
     final textPainter = TextPainter(
@@ -156,7 +156,7 @@ class _BarChartPainter extends CustomPainter {
         begin: Alignment.bottomCenter,
         end: Alignment.topCenter,
         colors: [
-          primaryColor.withOpacity(0.6),
+          primaryColor.withValues(alpha: 0.6),
           i % 2 == 1 ? accentColor : primaryColor,
         ],
       );

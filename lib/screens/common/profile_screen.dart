@@ -5,7 +5,7 @@ import '../../core/theme/app_theme.dart';
 import '../../widgets/custom_button.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -61,8 +61,8 @@ class ProfileScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   color: user.role == 'teacher'
-                      ? AppTheme.secondaryColor.withOpacity(0.1)
-                      : AppTheme.primaryColor.withOpacity(0.1),
+                      ? AppTheme.secondaryColor.withValues(alpha: 0.1)
+                      : AppTheme.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(

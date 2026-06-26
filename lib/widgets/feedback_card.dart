@@ -9,12 +9,12 @@ class FeedbackCard extends StatelessWidget {
   final String? teacherName;
 
   const FeedbackCard({
-    Key? key,
+    super.key,
     required this.rating,
     required this.comment,
     required this.createdAt,
     this.teacherName,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

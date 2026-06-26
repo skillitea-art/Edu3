@@ -17,7 +17,7 @@ import '../../widgets/custom_chart.dart';
 import 'create_tuition_screen.dart';
 
 class TeacherDashboard extends StatefulWidget {
-  const TeacherDashboard({Key? key}) : super(key: key);
+  const TeacherDashboard({super.key});
 
   @override
   State<TeacherDashboard> createState() => _TeacherDashboardState();
@@ -225,7 +225,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.primaryColor.withOpacity(0.2),
+                  color: AppTheme.primaryColor.withValues(alpha: 0.2),
                   blurRadius: 15,
                   offset: const Offset(0, 6),
                 ),
@@ -239,7 +239,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
                     children: [
                       Text(
                         'Welcome back,',
-                        style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14),
+                        style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 14),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -249,7 +249,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
                       const SizedBox(height: 12),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(30)),
+                        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(30)),
                         child: Text(
                           'Role: Teacher Console',
                           style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
@@ -325,7 +325,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
             color: isDark ? const Color(0xFF1E293B) : Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+              side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
             ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -364,13 +364,13 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: color.withOpacity(0.12), shape: BoxShape.circle),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.12), shape: BoxShape.circle),
             child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(width: 14),
@@ -459,7 +459,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
                 margin: const EdgeInsets.only(bottom: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+                  side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
                 ),
                 child: InkWell(
                   onTap: () {
@@ -482,7 +482,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(color: AppTheme.primaryColor.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+                              decoration: BoxDecoration(color: AppTheme.primaryColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
                               child: Text(
                                 tuition.subject,
                                 style: const TextStyle(color: AppTheme.primaryColor, fontSize: 11, fontWeight: FontWeight.bold),
@@ -628,12 +628,12 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
                       margin: const EdgeInsets.only(bottom: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
-                        side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+                        side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
                       ),
                       child: ListTile(
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         leading: CircleAvatar(
-                          backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+                          backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
                           child: Text(name[0].toUpperCase(), style: const TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold)),
                         ),
                         title: Text(name, style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
@@ -644,7 +644,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
                             const SizedBox(height: 4),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(color: AppTheme.secondaryColor.withOpacity(0.1), borderRadius: BorderRadius.circular(6)),
+                              decoration: BoxDecoration(color: AppTheme.secondaryColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)),
                               child: Text(className, style: const TextStyle(fontSize: 10, color: AppTheme.secondaryColor, fontWeight: FontWeight.bold)),
                             ),
                           ],
@@ -801,7 +801,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF1E293B) : Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+                border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
               ),
               child: Row(
                 children: [
@@ -849,7 +849,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
                       margin: const EdgeInsets.only(bottom: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
-                        side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+                        side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
                       ),
                       child: ListTile(
                         title: Text(task.title, style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
@@ -922,7 +922,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
-              side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100),
+              side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
             ),
             child: Padding(
               padding: const EdgeInsets.all(20.0),

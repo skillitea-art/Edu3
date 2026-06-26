@@ -5,7 +5,7 @@ import '../../providers/tuition_provider.dart';
 import '../../core/theme/app_theme.dart';
 
 class JoinTuitionScreen extends StatefulWidget {
-  const JoinTuitionScreen({Key? key}) : super(key: key);
+  const JoinTuitionScreen({super.key});
 
   @override
   State<JoinTuitionScreen> createState() => _JoinTuitionScreenState();
@@ -250,7 +250,7 @@ class _JoinTuitionScreenState extends State<JoinTuitionScreen> {
                 
                 // Info Card
                 Card(
-                  color: AppTheme.primaryColor.withOpacity(0.1),
+                  color: AppTheme.primaryColor.withValues(alpha: 0.1),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

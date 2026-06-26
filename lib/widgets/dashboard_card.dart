@@ -9,13 +9,13 @@ class DashboardCard extends StatelessWidget {
   final Color? color;
 
   const DashboardCard({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     required this.value,
     this.onTap,
     this.color,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class DashboardCard extends StatelessWidget {
           gradient: LinearGradient(
             colors: [
               cardColor,
-              cardColor.withOpacity(0.7),
+              cardColor.withValues(alpha: 0.7),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -37,7 +37,7 @@ class DashboardCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: cardColor.withOpacity(0.3),
+              color: cardColor.withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),

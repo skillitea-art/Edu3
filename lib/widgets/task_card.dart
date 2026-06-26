@@ -10,13 +10,13 @@ class TaskCard extends StatelessWidget {
   final VoidCallback? onToggle;
 
   const TaskCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.subject,
     required this.deadline,
     this.isCompleted = false,
     this.onToggle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

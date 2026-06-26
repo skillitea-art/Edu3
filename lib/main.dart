@@ -22,7 +22,7 @@ void main() async {
 }
 
 class VedoApp extends StatelessWidget {
-  const VedoApp({Key? key}) : super(key: key);
+  const VedoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
