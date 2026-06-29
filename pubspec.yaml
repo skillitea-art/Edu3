@@ -2,7 +2,7 @@ name: vedo
 description: "Smart Tuition Study & Feedback App"
 publish_to: 'none'
 
-version: 1.0.5+6
+version: 1.0.7+8
 
 environment:
   sdk: ^3.9.2

@@ -1,38 +1,1114 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-  <base href="$FLUTTER_BASE_HREF">
-
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
-
-  <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="vedo">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>vedo</title>
-  <link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Vedo — Connected Coaching Platform</title>
+  <link rel="manifest" href="manifest.json" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root { color-scheme: light; }
+    body { margin: 0; font-family: 'Inter', sans-serif; background: #f8fafc; color: #0f172a; }
+    * { box-sizing: border-box; }
+    .glass { background: rgba(255,255,255,0.9); backdrop-filter: blur(16px); border: 1px solid rgba(15,23,42,0.08); }
+    .animate-in { animation: slideIn .25s ease; }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; transform: translateY(0);} }
+    :root[data-theme='dark'] { color-scheme: dark; }
+    :root[data-theme='dark'] body { background: #020617; color: #e2e8f0; }
+    :root[data-theme='dark'] .glass { background: rgba(15,23,42,0.75); border-color: rgba(255,255,255,0.1); }
+    :root[data-theme='dark'] .bg-slate-950, :root[data-theme='dark'] .bg-slate-950\/80, :root[data-theme='dark'] .bg-slate-950\/70, :root[data-theme='dark'] .bg-slate-900, :root[data-theme='dark'] .bg-slate-900\/70, :root[data-theme='dark'] .bg-slate-900\/80, :root[data-theme='dark'] .bg-slate-800 { background-color: #0f172a !important; color: #e2e8f0 !important; }
+    :root[data-theme='dark'] .text-slate-100, :root[data-theme='dark'] .text-slate-200, :root[data-theme='dark'] .text-slate-300, :root[data-theme='dark'] .text-slate-400 { color: #cbd5e1 !important; }
+    :root[data-theme='light'] body { background: #f8fafc; color: #0f172a; }
+    :root[data-theme='light'] .bg-slate-950, :root[data-theme='light'] .bg-slate-950\/80, :root[data-theme='light'] .bg-slate-950\/70, :root[data-theme='light'] .bg-slate-900, :root[data-theme='light'] .bg-slate-900\/70, :root[data-theme='light'] .bg-slate-900\/80, :root[data-theme='light'] .bg-slate-800 { background-color: #ffffff !important; color: #0f172a !important; }
+    :root[data-theme='light'] .text-slate-100, :root[data-theme='light'] .text-slate-200, :root[data-theme='light'] .text-slate-300, :root[data-theme='light'] .text-slate-400 { color: #334155 !important; }
+    :root[data-theme='light'] .text-white { color: #0f172a !important; }
+    :root[data-theme='light'] .border-white\/10 { border-color: rgba(15,23,42,0.1) !important; }
+  </style>
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { createContext, useContext, useEffect, useMemo, useState } = React;
+    const { createRoot } = ReactDOM;
+
+    const StorageKeys = { USER: 'vedo_user', DATA: 'vedo_app_data' };
+
+    const db = {
+      get: (key, fallback) => {
+        try {
+          const raw = localStorage.getItem(key);
+          return raw ? JSON.parse(raw) : fallback;
+        } catch {
+          return fallback;
+        }
+      },
+      set: (key, value) => {
+        try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+      }
+    };
+
+    const firebaseConfig = {
+      apiKey: 'AIzaSyA81vHD1OouE3sPLzmgDUS_OH1waade5aY',
+      authDomain: 'vedo-01.firebaseapp.com',
+      projectId: 'vedo-01',
+      storageBucket: 'vedo-01.firebasestorage.app',
+      messagingSenderId: '1881105365',
+      appId: '1:1881105365:web:9a016b072ff0b3c59ed35c'
+    };
+
+    let firestoreRef = null;
+    let authRef = null;
+    let backendReady = false;
+    try {
+      if (window.firebase?.apps?.length) {
+        firebase.app();
+      } else {
+        firebase.initializeApp(firebaseConfig);
+      }
+      firestoreRef = firebase.firestore();
+      authRef = firebase.auth();
+      backendReady = true;
+    } catch (error) {
+      console.warn('Firebase unavailable, using local fallback.', error);
+    }
+
+    const initialState = {
+      institutes: [
+        { id: 'INS-001', name: 'Vedo Super Academy', city: 'Pune', description: 'Best coaching institute for boards and competitive exams.', ownerId: 'owner-demo', ownerName: 'Asha Owner', code: 'VEDO01', teacherIds: ['teacher-demo'], studentIds: ['student-demo'], classIds: ['CLS-001', 'CLS-002'], createdAt: stamp() },
+        { id: 'INS-002', name: 'Bright Future Classes', city: 'Mumbai', description: 'JEE and NEET focused batches.', ownerId: 'owner-demo', ownerName: 'Asha Owner', code: 'BRIGHT', teacherIds: ['teacher-demo'], studentIds: [], classIds: ['CLS-003'], createdAt: stamp() }
+      ],
+      classes: [
+        { id: 'CLS-001', instituteId: 'INS-001', ownerId: 'owner-demo', teacherId: 'teacher-demo', teacherName: 'Priya Kulkarni', name: 'Class 10 Semi-English', subject: 'Math', fee: 1800, schedule: 'Weekly', description: 'Board prep with live doubt solving.', code: 'CL10A', createdAt: stamp(), teacherIds: ['teacher-demo'], studentIds: ['student-demo'] },
+        { id: 'CLS-002', instituteId: 'INS-001', ownerId: 'owner-demo', teacherId: 'teacher-demo', teacherName: 'Priya Kulkarni', name: 'Class 12 Science', subject: 'Physics', fee: 3500, schedule: 'Weekly', description: 'Premium science batch.', code: 'CL12S', createdAt: stamp(), teacherIds: ['teacher-demo'], studentIds: [] },
+        { id: 'CLS-003', instituteId: 'INS-002', ownerId: 'owner-demo', teacherId: 'teacher-demo', teacherName: 'Priya Kulkarni', name: 'JEE Advanced Batch', subject: 'Chemistry', fee: 5000, schedule: 'Daily', description: 'Advanced practice batch.', code: 'JEE01', createdAt: stamp(), teacherIds: ['teacher-demo'], studentIds: [] }
+      ],
+      users: [
+        { id: 'student-demo', role: 'student', name: 'Rahul Patil', email: 'student@vedo.app', instituteIds: ['INS-001'], classIds: ['CLS-001'], childId: 'student-demo', createdAt: stamp() },
+        { id: 'teacher-demo', role: 'teacher', name: 'Priya Kulkarni', email: 'teacher@vedo.app', instituteIds: ['INS-001'], classIds: ['CLS-001', 'CLS-002'], createdAt: stamp() },
+        { id: 'owner-demo', role: 'owner', name: 'Asha Owner', email: 'owner@vedo.app', instituteIds: ['INS-001', 'INS-002'], classIds: ['CLS-001', 'CLS-002', 'CLS-003'], createdAt: stamp() },
+        { id: 'parent-demo', role: 'parent', name: 'Deepak Patil', email: 'parent@vedo.app', childId: 'student-demo', createdAt: stamp() }
+      ],
+      joinRequests: [
+        { id: 'REQ-001', targetType: 'class', targetId: 'CLS-002', targetName: 'Class 12 Science', requesterId: 'student-demo', requesterName: 'Rahul Patil', role: 'student', status: 'pending', createdAt: stamp() },
+        { id: 'REQ-002', targetType: 'class', targetId: 'CLS-003', targetName: 'JEE Advanced Batch', requesterId: 'teacher-demo', requesterName: 'Priya Kulkarni', role: 'teacher', status: 'pending', createdAt: stamp() }
+      ],
+      announcements: [
+        { id: 'ANN-001', title: 'Physics Test', message: 'Physics test on 30 June for Chapter 10 and 11.', instituteId: 'INS-001', classId: 'CLS-002', createdBy: 'Asha Owner', createdAt: stamp() },
+        { id: 'ANN-002', title: 'Holiday Update', message: 'Institute will remain closed on 15 July for maintenance.', instituteId: 'INS-001', classId: null, createdBy: 'Asha Owner', createdAt: stamp() }
+      ],
+      fees: [
+        { id: 'FEE-001', studentId: 'student-demo', studentName: 'Rahul Patil', classId: 'CLS-001', amount: 3600, dueDate: '2026-07-01', status: 'pending', createdAt: stamp() },
+        { id: 'FEE-002', studentId: 'student-demo', studentName: 'Rahul Patil', classId: 'CLS-001', amount: 1800, dueDate: '2026-08-01', status: 'pending', createdAt: stamp() }
+      ],
+      schedules: [
+        { id: 'SCH-001', title: 'Math Session', time: '04:00 PM', classId: 'CLS-001', instituteId: 'INS-001', createdBy: 'Priya Kulkarni', createdAt: stamp() },
+        { id: 'SCH-002', title: 'Physics Doubt Class', time: '06:00 PM', classId: 'CLS-002', instituteId: 'INS-001', createdBy: 'Priya Kulkarni', createdAt: stamp() }
+      ],
+      notes: [
+        { id: 'NOTE-001', title: 'Quadratic Formula', content: 'Complete formula sheet for revision.', classId: 'CLS-001', instituteId: 'INS-001', createdBy: 'Priya Kulkarni', createdAt: stamp() },
+        { id: 'NOTE-002', title: 'Ray Diagrams', content: 'Quick revision note for optics.', classId: 'CLS-002', instituteId: 'INS-001', createdBy: 'Priya Kulkarni', createdAt: stamp() }
+      ],
+      homeworks: [
+        { id: 'HW-001', title: 'Solve 10 equations', description: 'Submit before Friday', dueDate: '2026-06-30', classId: 'CLS-001', instituteId: 'INS-001', createdBy: 'Priya Kulkarni', createdAt: stamp(), submissions: [] },
+        { id: 'HW-002', title: 'Practice Numericals', description: 'Complete chapter 2 numericals', dueDate: '2026-07-02', classId: 'CLS-002', instituteId: 'INS-001', createdBy: 'Priya Kulkarni', createdAt: stamp(), submissions: [] }
+      ],
+      doubts: [
+        { id: 'DOU-001', question: 'How do I solve quadratic equations?', classId: 'CLS-001', instituteId: 'INS-001', studentId: 'student-demo', studentName: 'Rahul Patil', status: 'open', createdAt: stamp() },
+        { id: 'DOU-002', question: 'Explain Newton law with example.', classId: 'CLS-002', instituteId: 'INS-001', studentId: 'student-demo', studentName: 'Rahul Patil', status: 'open', createdAt: stamp() }
+      ],
+      feedbacks: [
+        { id: 'FB-001', text: 'Great improvement in test performance.', studentId: 'student-demo', teacherId: 'teacher-demo', classId: 'CLS-001', instituteId: 'INS-001', createdAt: stamp() }
+      ],
+      marks: [
+        { id: 'MARK-001', studentId: 'student-demo', studentName: 'Rahul Patil', title: 'Unit Test 1', score: 82, maxScore: 100, classId: 'CLS-001', instituteId: 'INS-001', createdAt: stamp() }
+      ]
+    };
+
+    const roleLabels = { student: 'Student', teacher: 'Teacher', owner: 'Owner', parent: 'Parent' };
+
+    const AuthContext = createContext(null);
+    const NavContext = createContext(null);
+    const ToastContext = createContext(null);
+    const AppDataContext = createContext(null);
+    const ThemeContext = createContext(null);
+
+    function useAuth() { return useContext(AuthContext); }
+    function useNav() { return useContext(NavContext); }
+    function useToast() { return useContext(ToastContext); }
+    function useAppData() { return useContext(AppDataContext); }
+    function useTheme() { return useContext(ThemeContext); }
+
+    function ThemeProvider({ children }) {
+      const [theme, setTheme] = useState(() => db.get('vedo_theme', 'light'));
+      useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        document.body.setAttribute('data-theme', theme);
+        db.set('vedo_theme', theme);
+      }, [theme]);
+      const toggleTheme = () => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+      return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;
+    }
+
+    function generateCode(length = 6) {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let code = '';
+      for (let i = 0; i < length; i += 1) code += chars.charAt(Math.floor(Math.random() * chars.length));
+      return code;
+    }
+
+    function stamp() {
+      return new Date().toISOString();
+    }
+
+    function NavProvider({ children }) {
+      const [currentPath, setCurrentPath] = useState(() => window.location.hash.replace('#', '') || '/discover');
+      const navigateTo = (path) => {
+        setCurrentPath(path);
+        window.history.pushState({}, '', '#' + path);
+      };
+      useEffect(() => {
+        const onPop = () => {
+          const next = window.location.hash.replace('#', '') || '/discover';
+          setCurrentPath(next);
+        };
+        window.addEventListener('popstate', onPop);
+        return () => window.removeEventListener('popstate', onPop);
+      }, []);
+      return <NavContext.Provider value={{ currentPath, navigateTo }}>{children}</NavContext.Provider>;
+    }
+
+    function ToastProvider({ children }) {
+      const [toasts, setToasts] = useState([]);
+      const addToast = (message, tone = 'info') => {
+        const id = Date.now() + Math.random();
+        setToasts((prev) => [...prev, { id, message, tone }]);
+        window.setTimeout(() => setToasts((prev) => prev.filter((item) => item.id !== id)), 2800);
+      };
+      return (
+        <ToastContext.Provider value={{ addToast }}>
+          {children}
+          <div className="fixed right-3 top-3 z-[80] flex flex-col gap-2 w-[90vw] max-w-sm">
+            {toasts.map((toast) => (
+              <div key={toast.id} className={`rounded-2xl border px-3 py-2 text-sm shadow-xl animate-in ${toast.tone === 'success' ? 'border-emerald-500/40 bg-emerald-600/95 text-white' : toast.tone === 'error' ? 'border-rose-500/40 bg-rose-600/95 text-white' : 'border-indigo-500/40 bg-slate-900/95 text-slate-100'}`}>
+                {toast.message}
+              </div>
+            ))}
+          </div>
+        </ToastContext.Provider>
+      );
+    }
+
+    function AppDataProvider({ children }) {
+      const [institutes, setInstitutes] = useState(() => db.get(StorageKeys.DATA, initialState)?.institutes || initialState.institutes);
+      const [classes, setClasses] = useState(() => db.get(StorageKeys.DATA, initialState)?.classes || initialState.classes);
+      const [users, setUsers] = useState(() => db.get(StorageKeys.DATA, initialState)?.users || initialState.users);
+      const [joinRequests, setJoinRequests] = useState(() => db.get(StorageKeys.DATA, initialState)?.joinRequests || initialState.joinRequests);
+      const [announcements, setAnnouncements] = useState(() => db.get(StorageKeys.DATA, initialState)?.announcements || initialState.announcements);
+      const [fees, setFees] = useState(() => db.get(StorageKeys.DATA, initialState)?.fees || initialState.fees);
+      const [schedules, setSchedules] = useState(() => db.get(StorageKeys.DATA, initialState)?.schedules || initialState.schedules);
+      const [notes, setNotes] = useState(() => db.get(StorageKeys.DATA, initialState)?.notes || initialState.notes);
+      const [homeworks, setHomeworks] = useState(() => db.get(StorageKeys.DATA, initialState)?.homeworks || initialState.homeworks);
+      const [doubts, setDoubts] = useState(() => db.get(StorageKeys.DATA, initialState)?.doubts || initialState.doubts);
+      const [feedbacks, setFeedbacks] = useState(() => db.get(StorageKeys.DATA, initialState)?.feedbacks || initialState.feedbacks);
+      const [marks, setMarks] = useState(() => db.get(StorageKeys.DATA, initialState)?.marks || initialState.marks);
+
+      useEffect(() => {
+        if (!backendReady || !firestoreRef) return;
+        const unsubs = [];
+        const attach = (collectionName, setter) => {
+          const unsub = firestoreRef.collection(collectionName).orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
+            setter(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+          });
+          unsubs.push(unsub);
+        };
+        attach('institutes', setInstitutes);
+        attach('classes', setClasses);
+        attach('users', setUsers);
+        attach('joinRequests', setJoinRequests);
+        attach('announcements', setAnnouncements);
+        attach('fees', setFees);
+        attach('schedules', setSchedules);
+        attach('notes', setNotes);
+        attach('homeworks', setHomeworks);
+        attach('doubts', setDoubts);
+        attach('feedbacks', setFeedbacks);
+        attach('marks', setMarks);
+        return () => unsubs.forEach((fn) => fn());
+      }, []);
+
+      useEffect(() => {
+        db.set(StorageKeys.DATA, { institutes, classes, users, joinRequests, announcements, fees, schedules, notes, homeworks, doubts, feedbacks, marks });
+      }, [institutes, classes, users, joinRequests, announcements, fees, schedules, notes, homeworks, doubts, feedbacks, marks]);
+
+      const saveDoc = async (collectionName, item) => {
+        if (!backendReady || !firestoreRef) return item;
+        const id = item.id || `${collectionName}-${Date.now()}`;
+        const payload = { ...item, id };
+        await firestoreRef.collection(collectionName).doc(id).set(payload);
+        return payload;
+      };
+
+      const updateUser = async (userDoc) => {
+        if (!backendReady || !firestoreRef) {
+          setUsers((prev) => [userDoc, ...prev.filter((item) => item.id !== userDoc.id)]);
+          return;
+        }
+        const payload = { ...userDoc, id: userDoc.id };
+        await firestoreRef.collection('users').doc(userDoc.id).set(payload, { merge: true });
+        setUsers((prev) => [payload, ...prev.filter((item) => item.id !== userDoc.id)]);
+      };
+
+      const createInstitute = async ({ name, city, description, ownerId, ownerName }) => {
+        const institute = { id: `INS-${Date.now()}`, name, city, description, ownerId, ownerName, code: generateCode(), createdAt: stamp(), teacherIds: [], studentIds: [], classIds: [] };
+        setInstitutes((prev) => [institute, ...prev]);
+        if (backendReady && firestoreRef) await firestoreRef.collection('institutes').doc(institute.id).set(institute);
+        if (ownerId) {
+          const ownerDoc = users.find((item) => item.id === ownerId) || { id: ownerId, role: 'owner', instituteIds: [] };
+          const nextOwner = { ...ownerDoc, instituteIds: [...new Set([...(ownerDoc.instituteIds || []), institute.id])] };
+          await updateUser(nextOwner);
+        }
+        return institute;
+      };
+
+      const createClass = async ({ instituteId, ownerId, teacherId, teacherName, name, subject, fee, schedule, description }) => {
+        const cls = { id: `CLS-${Date.now()}`, instituteId: instituteId || null, ownerId: ownerId || null, teacherId: teacherId || null, teacherName: teacherName || '', name, subject, fee: Number(fee || 0), schedule: schedule || 'Weekly', description: description || '', code: generateCode(), createdAt: stamp(), teacherIds: teacherId ? [teacherId] : [], studentIds: [] };
+        setClasses((prev) => [cls, ...prev]);
+        if (backendReady && firestoreRef) await firestoreRef.collection('classes').doc(cls.id).set(cls);
+        if (instituteId) {
+          setInstitutes((prev) => prev.map((item) => item.id === instituteId ? { ...item, classIds: [...new Set([...(item.classIds || []), cls.id])] } : item));
+        }
+        if (teacherId) {
+          const teacherDoc = users.find((item) => item.id === teacherId) || { id: teacherId, role: 'teacher', classIds: [] };
+          const nextTeacher = { ...teacherDoc, classIds: [...new Set([...(teacherDoc.classIds || []), cls.id])] };
+          await updateUser(nextTeacher);
+        }
+        return cls;
+      };
+
+      const createJoinRequest = async ({ targetType, targetId, targetName, requesterId, requesterName, role }) => {
+        const payload = { id: `REQ-${Date.now()}`, targetType, targetId, targetName, requesterId, requesterName, role, status: 'pending', createdAt: stamp() };
+        setJoinRequests((prev) => [payload, ...prev]);
+        if (backendReady && firestoreRef) await firestoreRef.collection('joinRequests').doc(payload.id).set(payload);
+        return payload;
+      };
+
+      const approveRequest = async (requestId) => {
+        const request = joinRequests.find((item) => item.id === requestId);
+        if (!request) return;
+        const nextStatus = 'approved';
+        setJoinRequests((prev) => prev.map((item) => item.id === requestId ? { ...item, status: nextStatus, updatedAt: stamp() } : item));
+        if (backendReady && firestoreRef) await firestoreRef.collection('joinRequests').doc(requestId).set({ ...request, status: nextStatus, updatedAt: stamp() }, { merge: true });
+        const targetUser = users.find((item) => item.id === request.requesterId) || { id: request.requesterId, role: request.role, instituteIds: [], classIds: [] };
+        const updatedUser = {
+          ...targetUser,
+          role: request.role,
+          instituteIds: request.targetType === 'institute' ? [...new Set([...(targetUser.instituteIds || []), request.targetId])] : targetUser.instituteIds || [],
+          classIds: request.targetType === 'class' ? [...new Set([...(targetUser.classIds || []), request.targetId])] : targetUser.classIds || []
+        };
+        await updateUser(updatedUser);
+        if (request.targetType === 'institute') {
+          setInstitutes((prev) => prev.map((item) => item.id === request.targetId ? {
+            ...item,
+            studentIds: request.role === 'student' ? [...new Set([...(item.studentIds || []), request.requesterId])] : item.studentIds || [],
+            teacherIds: request.role === 'teacher' ? [...new Set([...(item.teacherIds || []), request.requesterId])] : item.teacherIds || []
+          } : item));
+        }
+        if (request.targetType === 'class') {
+          setClasses((prev) => prev.map((item) => item.id === request.targetId ? {
+            ...item,
+            studentIds: request.role === 'student' ? [...new Set([...(item.studentIds || []), request.requesterId])] : item.studentIds || [],
+            teacherIds: request.role === 'teacher' ? [...new Set([...(item.teacherIds || []), request.requesterId])] : item.teacherIds || []
+          } : item));
+        }
+        if (request.role === 'student') {
+          const fee = { id: `FEE-${Date.now()}`, studentId: request.requesterId, studentName: request.requesterName, classId: request.targetType === 'class' ? request.targetId : null, status: 'pending', amount: 0, dueDate: stamp().slice(0, 10), createdAt: stamp() };
+          setFees((prev) => [fee, ...prev]);
+          if (backendReady && firestoreRef) await firestoreRef.collection('fees').doc(fee.id).set(fee);
+        }
+      };
+
+      const rejectRequest = async (requestId) => {
+        setJoinRequests((prev) => prev.map((item) => item.id === requestId ? { ...item, status: 'rejected' } : item));
+        if (backendReady && firestoreRef) await firestoreRef.collection('joinRequests').doc(requestId).set({ status: 'rejected' }, { merge: true });
+      };
+
+      const createAnnouncement = async ({ title, message, instituteId, classId, createdBy }) => {
+        const payload = { id: `ANN-${Date.now()}`, title, message, instituteId: instituteId || null, classId: classId || null, createdBy, createdAt: stamp() };
+        setAnnouncements((prev) => [payload, ...prev]);
+        if (backendReady && firestoreRef) await firestoreRef.collection('announcements').doc(payload.id).set(payload);
+        return payload;
+      };
+
+      const createFee = async ({ studentId, studentName, classId, amount, dueDate }) => {
+        const payload = { id: `FEE-${Date.now()}`, studentId, studentName, classId: classId || null, amount: Number(amount || 0), dueDate, status: 'pending', createdAt: stamp() };
+        setFees((prev) => [payload, ...prev]);
+        if (backendReady && firestoreRef) await firestoreRef.collection('fees').doc(payload.id).set(payload);
+        return payload;
+      };
+
+      const createSchedule = async ({ title, time, classId, instituteId, createdBy }) => {
+        const payload = { id: `SCH-${Date.now()}`, title, time, classId: classId || null, instituteId: instituteId || null, createdBy, createdAt: stamp() };
+        setSchedules((prev) => [payload, ...prev]);
+        if (backendReady && firestoreRef) await firestoreRef.collection('schedules').doc(payload.id).set(payload);
+        return payload;
+      };
+
+      const createNote = async ({ title, content, classId, instituteId, createdBy }) => {
+        const payload = { id: `NOTE-${Date.now()}`, title, content, classId: classId || null, instituteId: instituteId || null, createdBy, createdAt: stamp() };
+        setNotes((prev) => [payload, ...prev]);
+        if (backendReady && firestoreRef) await firestoreRef.collection('notes').doc(payload.id).set(payload);
+        return payload;
+      };
+
+      const createHomework = async ({ title, description, dueDate, classId, instituteId, createdBy }) => {
+        const payload = { id: `HW-${Date.now()}`, title, description, dueDate, classId: classId || null, instituteId: instituteId || null, createdBy, createdAt: stamp(), submissions: [] };
+        setHomeworks((prev) => [payload, ...prev]);
+        if (backendReady && firestoreRef) await firestoreRef.collection('homeworks').doc(payload.id).set(payload);
+        return payload;
+      };
+
+      const submitHomework = async ({ homeworkId, studentId, studentName, status }) => {
+        setHomeworks((prev) => prev.map((item) => item.id === homeworkId ? { ...item, submissions: [...(item.submissions || []), { studentId, studentName, status, submittedAt: stamp() }] } : item));
+        if (backendReady && firestoreRef) {
+          const homeworkDoc = await firestoreRef.collection('homeworks').doc(homeworkId).get();
+          if (homeworkDoc.exists) {
+            const data = homeworkDoc.data();
+            await firestoreRef.collection('homeworks').doc(homeworkId).set({ ...data, submissions: [...(data.submissions || []), { studentId, studentName, status, submittedAt: stamp() }] }, { merge: true });
+          }
+        }
+      };
+
+      const addDoubt = async ({ question, classId, instituteId, studentId, studentName }) => {
+        const payload = { id: `DOU-${Date.now()}`, question, classId: classId || null, instituteId: instituteId || null, studentId, studentName, status: 'open', createdAt: stamp() };
+        setDoubts((prev) => [payload, ...prev]);
+        if (backendReady && firestoreRef) await firestoreRef.collection('doubts').doc(payload.id).set(payload);
+        return payload;
+      };
+
+      const addFeedback = async ({ text, studentId, teacherId, classId, instituteId }) => {
+        const payload = { id: `FB-${Date.now()}`, text, studentId, teacherId, classId: classId || null, instituteId: instituteId || null, createdAt: stamp() };
+        setFeedbacks((prev) => [payload, ...prev]);
+        if (backendReady && firestoreRef) await firestoreRef.collection('feedbacks').doc(payload.id).set(payload);
+        return payload;
+      };
+
+      const addMark = async ({ studentId, studentName, title, score, maxScore, classId, instituteId }) => {
+        const payload = { id: `MARK-${Date.now()}`, studentId, studentName, title, score: Number(score || 0), maxScore: Number(maxScore || 0), classId: classId || null, instituteId: instituteId || null, createdAt: stamp() };
+        setMarks((prev) => [payload, ...prev]);
+        if (backendReady && firestoreRef) await firestoreRef.collection('marks').doc(payload.id).set(payload);
+        return payload;
+      };
+
+      const value = { institutes, classes, users, joinRequests, announcements, fees, schedules, notes, homeworks, doubts, feedbacks, marks, createInstitute, createClass, createJoinRequest, approveRequest, rejectRequest, createAnnouncement, createFee, createSchedule, createNote, createHomework, submitHomework, addDoubt, addFeedback, addMark, updateUser };
+      return <AppDataContext.Provider value={value}>{children}</AppDataContext.Provider>;
+    }
+
+    function AuthProvider({ children }) {
+      const { navigateTo } = useNav();
+      const { createInstitute, updateUser } = useAppData();
+      const [authUser, setAuthUser] = useState(null);
+      const [profile, setProfile] = useState(null);
+      const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+        if (!backendReady || !authRef) {
+          setLoading(false);
+          return;
+        }
+        const unsubscribe = authRef.onAuthStateChanged(async (user) => {
+          setAuthUser(user);
+          if (!user) {
+            setProfile(null);
+            setLoading(false);
+            return;
+          }
+          const snapshot = await firestoreRef.collection('users').doc(user.uid).get();
+          if (snapshot.exists) {
+            const data = snapshot.data();
+            setProfile({ id: user.uid, ...data });
+          } else {
+            setProfile({ id: user.uid, role: 'student', name: user.email, instituteIds: [], classIds: [] });
+          }
+          setLoading(false);
+        });
+        return unsubscribe;
+      }, []);
+
+      const login = async (email, password) => {
+        const demoProfiles = {
+          'student@vedo.app': { profile: { id: 'student-demo', role: 'student', name: 'Rahul Patil', email, instituteIds: ['INS-001'], classIds: ['CLS-001'] }, password: 'student123' },
+          'teacher@vedo.app': { profile: { id: 'teacher-demo', role: 'teacher', name: 'Priya Kulkarni', email, instituteIds: ['INS-001'], classIds: ['CLS-001', 'CLS-002'] }, password: 'teacher123' },
+          'owner@vedo.app': { profile: { id: 'owner-demo', role: 'owner', name: 'Asha Owner', email, instituteIds: ['INS-001', 'INS-002'], classIds: ['CLS-001', 'CLS-002', 'CLS-003'] }, password: 'admin123' },
+          'parent@vedo.app': { profile: { id: 'parent-demo', role: 'parent', name: 'Deepak Patil', email, childId: 'student-demo' }, password: 'parent123' }
+        };
+        if (!backendReady || !authRef) {
+          const demo = demoProfiles[email];
+          if (demo && demo.password === password) {
+            setProfile(demo.profile);
+            setAuthUser({ uid: demo.profile.id, email });
+            const target = demo.profile.role === 'owner' ? '/owner' : demo.profile.role === 'teacher' ? '/teacher' : demo.profile.role === 'parent' ? '/parent' : '/student';
+            navigateTo(target);
+            return { ok: true };
+          }
+          return { ok: false, message: 'Demo login unavailable. Try student@vedo.app / student123.' };
+        }
+        try {
+          const result = await authRef.signInWithEmailAndPassword(email, password);
+          const snapshot = await firestoreRef.collection('users').doc(result.user.uid).get();
+          const profileData = snapshot.exists ? { id: result.user.uid, ...snapshot.data() } : { id: result.user.uid, role: 'student', name: result.user.email, instituteIds: [], classIds: [] };
+          setProfile(profileData);
+          setAuthUser(result.user);
+          const target = profileData.role === 'owner' ? '/owner' : profileData.role === 'teacher' ? '/teacher' : profileData.role === 'parent' ? '/parent' : '/student';
+          navigateTo(target);
+          return { ok: true };
+        } catch (error) {
+          return { ok: false, message: error.message || 'Login failed.' };
+        }
+      };
+
+      const signup = async ({ email, password, role, name, instituteName, city }) => {
+        if (!backendReady || !authRef) {
+          const profileData = { id: `${role}-${Date.now()}`, role, name, email, instituteIds: [], classIds: [], createdAt: stamp() };
+          setProfile(profileData);
+          setAuthUser({ uid: profileData.id, email });
+          if (role === 'owner' && instituteName) {
+            await createInstitute({ name: instituteName, city: city || 'Pune', description: 'New institute created from signup.', ownerId: profileData.id, ownerName: name });
+          }
+          const target = role === 'owner' ? '/owner' : role === 'teacher' ? '/teacher' : role === 'parent' ? '/parent' : '/student';
+          navigateTo(target);
+          return { ok: true };
+        }
+        try {
+          const result = await authRef.createUserWithEmailAndPassword(email, password);
+          const profileData = { id: result.user.uid, authUid: result.user.uid, email, name, role, instituteIds: [], classIds: [], createdAt: stamp() };
+          await firestoreRef.collection('users').doc(result.user.uid).set(profileData);
+          setProfile(profileData);
+          setAuthUser(result.user);
+          if (role === 'owner' && instituteName) {
+            await createInstitute({ name: instituteName, city: city || 'Pune', description: 'New institute created from signup.', ownerId: result.user.uid, ownerName: name });
+          }
+          const target = role === 'owner' ? '/owner' : role === 'teacher' ? '/teacher' : role === 'parent' ? '/parent' : '/student';
+          navigateTo(target);
+          return { ok: true };
+        } catch (error) {
+          return { ok: false, message: error.message || 'Signup failed.' };
+        }
+      };
+
+      const logout = async () => {
+        if (authRef) await authRef.signOut();
+        setAuthUser(null);
+        setProfile(null);
+        navigateTo('/discover');
+      };
+
+      const value = { authUser, profile, loading, login, signup, logout };
+      return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    }
+
+    function BottomNavBar({ items, active, onChange }) {
+      return (
+        <div className="sticky bottom-3 mt-6 rounded-[28px] border border-white/10 bg-slate-900/95 p-2 shadow-2xl backdrop-blur">
+          <div className="flex flex-wrap gap-2">
+            {items.map((item) => (
+              <button key={item.id} onClick={() => onChange(item.id)} className={`flex flex-1 items-center justify-center gap-2 rounded-2xl px-3 py-2 text-sm font-medium ${active === item.id ? 'bg-indigo-600 text-white' : 'bg-white/5 text-slate-300 hover:bg-white/10'}`}>
+                <span>{item.icon}</span>
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function ScreenShell({ title, subtitle, children, right }) {
+      const { profile, logout } = useAuth();
+      const { navigateTo } = useNav();
+      const { theme, toggleTheme } = useTheme();
+      return (
+        <div className="min-h-screen bg-slate-950 text-slate-100">
+          <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+            <div className="glass rounded-3xl border border-white/10 p-4 shadow-2xl">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <div className="text-sm uppercase tracking-[0.3em] text-indigo-300">Vedo</div>
+                  <h1 className="text-2xl font-semibold">{title}</h1>
+                  <p className="text-sm text-slate-400">{subtitle}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button onClick={toggleTheme} className="rounded-full border border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700">{theme === 'light' ? '🌙 Dark' : '☀️ Light'}</button>
+                  <button onClick={() => navigateTo('/discover')} className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm">Home</button>
+                  {profile ? <button onClick={logout} className="rounded-full bg-rose-500 px-3 py-2 text-sm font-medium text-white">Logout</button> : <button onClick={() => navigateTo('/discover')} className="rounded-full bg-indigo-600 px-3 py-2 text-sm font-medium text-white">Login</button>}
+                  {right}
+                </div>
+              </div>
+            </div>
+            {children}
+          </div>
+        </div>
+      );
+    }
+
+    function DiscoverScreen() {
+      const { profile } = useAuth();
+      const { navigateTo } = useNav();
+      const { addToast } = useToast();
+      const { institutes, classes, users } = useAppData();
+      const [selectedInstitute, setSelectedInstitute] = useState(null);
+      const [selectedTeacher, setSelectedTeacher] = useState(null);
+
+      const publicInstitutes = institutes.slice(0, 4);
+      const publicTeachers = users.filter((item) => item.role === 'teacher').slice(0, 4);
+
+      const handleInstituteAction = (institute) => {
+        if (!profile) {
+          setSelectedInstitute(institute);
+          navigateTo('/auth');
+          addToast('Please login to view full institute details', 'error');
+          return;
+        }
+        setSelectedInstitute(institute);
+      };
+
+      const handleTeacherAction = (teacher) => {
+        if (!profile) {
+          setSelectedTeacher(teacher);
+          navigateTo('/auth');
+          addToast('Please login to view teacher details', 'error');
+          return;
+        }
+        setSelectedTeacher(teacher);
+      };
+
+      return (
+        <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(79,70,229,0.25),_transparent_32%),radial-gradient(circle_at_bottom_right,_rgba(16,185,129,0.18),_transparent_30%)] bg-slate-950 text-slate-100">
+          <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-10 sm:px-6 lg:px-8">
+            <div className="glass rounded-[32px] border border-white/10 p-8 shadow-2xl">
+              <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+                <div className="space-y-5">
+                  <div className="inline-flex rounded-full border border-indigo-400/30 bg-indigo-500/10 px-3 py-1 text-sm text-indigo-200">Live coaching, classes, fees and communication in one place</div>
+                  <h1 className="text-4xl font-semibold leading-tight sm:text-5xl">Create institutes, batches, classes and student groups with code-based joining.</h1>
+                  <p className="max-w-2xl text-lg text-slate-400">Owners can onboard institutes; teachers can create classes and manage lecture groups; students join with special codes and track notes, fees, homework and marks.</p>
+                  <div className="flex flex-wrap gap-3">
+                    <button onClick={() => navigateTo('/discover')} className="rounded-full bg-indigo-600 px-5 py-3 font-medium text-white">Start free</button>
+                    <button onClick={() => navigateTo('/student')} className="rounded-full border border-white/10 bg-white/5 px-5 py-3 font-medium text-white">View demo dashboard</button>
+                  </div>
+                </div>
+                <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+                  <AuthScreen compact />
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {publicInstitutes.map((item) => {
+                const batchCount = classes.filter((classItem) => classItem.instituteId === item.id).length;
+                return (
+                  <div key={item.id} className="glass rounded-3xl border border-white/10 p-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="text-lg font-semibold">{item.name}</h3>
+                        <p className="mt-1 text-sm text-slate-400">{item.city}</p>
+                      </div>
+                      <span className="rounded-full bg-indigo-500/10 px-2.5 py-1 text-xs font-medium text-indigo-300">{batchCount} batches</span>
+                    </div>
+                    <p className="mt-3 text-sm text-slate-400">{item.description}</p>
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="text-xs uppercase tracking-[0.25em] text-slate-500">Code {item.code}</span>
+                      <button onClick={() => handleInstituteAction(item)} className="rounded-full bg-indigo-600 px-3 py-2 text-sm font-medium text-white">View details</button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+              <div className="glass rounded-3xl border border-white/10 p-5">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">Featured teachers</h3>
+                  <span className="text-sm text-slate-400">Login required for full profile</span>
+                </div>
+                <div className="mt-4 space-y-3">
+                  {publicTeachers.map((teacher) => (
+                    <div key={teacher.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <div className="font-medium">{teacher.name}</div>
+                          <div className="text-sm text-slate-400">{teacher.email}</div>
+                        </div>
+                        <button onClick={() => handleTeacherAction(teacher)} className="rounded-full bg-emerald-600 px-3 py-2 text-sm font-medium text-white">View profile</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="glass rounded-3xl border border-white/10 p-5">
+                <h3 className="text-lg font-semibold">How it works</h3>
+                <div className="mt-4 space-y-3">
+                  {[
+                    ['Owner controls', 'Create institutes, approve student and teacher requests, send notifications and manage batches.'],
+                    ['Teacher workflow', 'Create and teach individual classes, post notes, assign homework, solve doubts and give feedback.'],
+                    ['Student journey', 'Join a class or institute by code, track fees, view schedule, submit homework and see marks.']
+                  ].map(([title, text]) => (
+                    <div key={title} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3">
+                      <h4 className="font-medium">{title}</h4>
+                      <p className="mt-1 text-sm text-slate-400">{text}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {selectedInstitute && (
+            <div className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-950/70 px-4 py-6">
+              <div className="w-full max-w-md rounded-[28px] border border-white/10 bg-slate-900/95 p-5 shadow-2xl">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-xl font-semibold">{selectedInstitute.name}</h3>
+                    <p className="mt-1 text-sm text-slate-400">{selectedInstitute.city}</p>
+                  </div>
+                  <button onClick={() => setSelectedInstitute(null)} className="rounded-full border border-white/10 px-3 py-2 text-sm text-slate-300">✕</button>
+                </div>
+                <div className="mt-4 space-y-3 text-sm text-slate-400">
+                  <p>{selectedInstitute.description}</p>
+                  <p>Institute code: {selectedInstitute.code}</p>
+                  <p>Owner: {selectedInstitute.ownerName}</p>
+                </div>
+                {profile ? (
+                  <div className="mt-5 flex gap-2">
+                    <button onClick={() => navigateTo('/student')} className="flex-1 rounded-full bg-indigo-600 px-3 py-2 text-sm font-medium text-white">Open dashboard</button>
+                    <button onClick={() => setSelectedInstitute(null)} className="flex-1 rounded-full border border-white/10 px-3 py-2 text-sm font-medium text-slate-300">Close</button>
+                  </div>
+                ) : (
+                  <div className="mt-5 space-y-3">
+                    <p className="text-sm text-slate-400">Login or create an account to open full institute details and join classes.</p>
+                    <button onClick={() => navigateTo('/auth')} className="w-full rounded-full bg-indigo-600 px-3 py-2 text-sm font-medium text-white">Login / sign up</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {selectedTeacher && (
+            <div className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-950/70 px-4 py-6">
+              <div className="w-full max-w-md rounded-[28px] border border-white/10 bg-slate-900/95 p-5 shadow-2xl">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-xl font-semibold">{selectedTeacher.name}</h3>
+                    <p className="mt-1 text-sm text-slate-400">{selectedTeacher.email}</p>
+                  </div>
+                  <button onClick={() => setSelectedTeacher(null)} className="rounded-full border border-white/10 px-3 py-2 text-sm text-slate-300">✕</button>
+                </div>
+                <div className="mt-4 space-y-3 text-sm text-slate-400">
+                  <p>Teacher profile is available after login so you can connect, book classes, and follow their batches.</p>
+                </div>
+                {profile ? (
+                  <div className="mt-5 flex gap-2">
+                    <button onClick={() => navigateTo('/student')} className="flex-1 rounded-full bg-emerald-600 px-3 py-2 text-sm font-medium text-white">Continue</button>
+                    <button onClick={() => setSelectedTeacher(null)} className="flex-1 rounded-full border border-white/10 px-3 py-2 text-sm font-medium text-slate-300">Close</button>
+                  </div>
+                ) : (
+                  <div className="mt-5 space-y-3">
+                    <p className="text-sm text-slate-400">Sign in to unlock teacher details and booking options.</p>
+                    <button onClick={() => navigateTo('/auth')} className="w-full rounded-full bg-emerald-600 px-3 py-2 text-sm font-medium text-white">Login / sign up</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function AuthScreen({ compact = false }) {
+      const [mode, setMode] = useState('login');
+      const [role, setRole] = useState('student');
+      const [name, setName] = useState('');
+      const [email, setEmail] = useState('');
+      const [password, setPassword] = useState('');
+      const [instituteName, setInstituteName] = useState('');
+      const [city, setCity] = useState('Pune');
+      const [message, setMessage] = useState('');
+      const { login, signup } = useAuth();
+      const { addToast } = useToast();
+
+      const handleSubmit = async (event) => {
+        event.preventDefault();
+        setMessage('');
+        if (mode === 'login') {
+          const result = await login(email, password);
+          if (!result.ok) {
+            setMessage(result.message);
+            addToast(result.message, 'error');
+          } else {
+            addToast('Signed in successfully', 'success');
+          }
+        } else {
+          const result = await signup({ email, password, role, name, instituteName, city });
+          if (!result.ok) {
+            setMessage(result.message);
+            addToast(result.message, 'error');
+          } else {
+            addToast('Account created successfully', 'success');
+          }
+        }
+      };
+
+      return (
+        <div className={compact ? '' : 'min-h-screen bg-slate-950 px-4 py-10'}>
+          <div className={compact ? 'space-y-4' : 'mx-auto max-w-md rounded-[32px] border border-white/10 bg-slate-900/70 p-6 shadow-2xl'}>
+            <div className="flex rounded-full border border-white/10 bg-white/5 p-1">
+              {['login', 'signup'].map((item) => (
+                <button key={item} onClick={() => setMode(item)} className={`flex-1 rounded-full px-3 py-2 text-sm font-medium ${mode === item ? 'bg-indigo-600 text-white' : 'text-slate-300'}`}>{item === 'login' ? 'Login' : 'Sign up'}</button>
+              ))}
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <select value={role} onChange={(event) => setRole(event.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm text-slate-100">
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+                <option value="owner">Owner</option>
+                <option value="parent">Parent</option>
+              </select>
+              {mode === 'signup' && <>
+                <input required value={name} onChange={(event) => setName(event.target.value)} placeholder="Your name" className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" />
+                {role === 'owner' && <>
+                  <input value={instituteName} onChange={(event) => setInstituteName(event.target.value)} placeholder="Institute name" className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" />
+                  <input value={city} onChange={(event) => setCity(event.target.value)} placeholder="City" className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" />
+                </>} 
+              </>}
+              <input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email address" className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" />
+              <input required type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Password" className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" />
+              <button className="w-full rounded-2xl bg-indigo-600 px-3 py-3 text-sm font-semibold text-white">{mode === 'login' ? 'Login' : 'Create account'}</button>
+            </form>
+            {message ? <div className="rounded-2xl border border-rose-400/20 bg-rose-500/10 p-3 text-sm text-rose-200">{message}</div> : null}
+          </div>
+        </div>
+      );
+    }
+
+    function StudentDashboard() {
+      const { profile } = useAuth();
+      const { institutes, classes, joinRequests, announcements, fees, notes, homeworks, marks, doubts, createJoinRequest, submitHomework, addDoubt } = useAppData();
+      const [joinCode, setJoinCode] = useState('');
+      const [activeTab, setActiveTab] = useState('home');
+      const [doubtText, setDoubtText] = useState('');
+      const { addToast } = useToast();
+      const approvedMemberships = joinRequests.filter((item) => item.requesterId === profile?.id && item.status === 'approved');
+      const visibleInstitutes = institutes.filter((item) => item.studentIds?.includes(profile?.id) || item.teacherIds?.includes(profile?.id) || approvedMemberships.some((req) => req.targetType === 'institute' && req.targetId === item.id) || item.id === profile?.instituteIds?.[0]);
+      const visibleClasses = classes.filter((item) => item.studentIds?.includes(profile?.id) || item.teacherIds?.includes(profile?.id) || approvedMemberships.some((req) => req.targetType === 'class' && req.targetId === item.id) || item.id === profile?.classIds?.[0]);
+      const joinByCode = async (targetType) => {
+        const target = targetType === 'class' ? classes.find((item) => item.code?.toLowerCase() === joinCode.toLowerCase()) : institutes.find((item) => item.code?.toLowerCase() === joinCode.toLowerCase());
+        if (!target) return addToast('No matching class or institute was found', 'error');
+        await createJoinRequest({ targetType, targetId: target.id, targetName: target.name, requesterId: profile.id, requesterName: profile.name, role: 'student' });
+        addToast('Join request sent to the owner', 'success');
+      };
+      const submitSelectedHomework = async (homeworkIdValue) => {
+        if (!homeworkIdValue) return;
+        await submitHomework({ homeworkId: homeworkIdValue, studentId: profile.id, studentName: profile.name, status: 'submitted' });
+        addToast('Homework submitted', 'success');
+      };
+      const saveDoubt = async (event) => {
+        event.preventDefault();
+        if (!doubtText.trim()) return;
+        await addDoubt({ question: doubtText, studentId: profile.id, studentName: profile.name, classId: visibleClasses[0]?.id || null, instituteId: visibleInstitutes[0]?.id || null });
+        setDoubtText('');
+        addToast('Doubt posted to the teacher', 'success');
+      };
+      const tabs = [
+        { id: 'home', label: 'Home', icon: '🏠' },
+        { id: 'lectures', label: 'Lectures', icon: '📹' },
+        { id: 'notes', label: 'Notes', icon: '📚' },
+        { id: 'doubts', label: 'Doubts', icon: '🤖' },
+        { id: 'fees', label: 'Fees', icon: '💰' },
+        { id: 'profile', label: 'Profile', icon: '👤' }
+      ];
+      return (
+        <ScreenShell title="Student dashboard" subtitle="Every student action now lives in the bottom navigation." right={<div className="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">{profile?.name || 'Student'}</div>}>
+          <div className="space-y-5">
+            <div className="glass rounded-3xl border border-white/10 p-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-xl font-semibold">Join class or institute</h2>
+                  <p className="text-sm text-slate-400">Use the code shared by your owner or teacher.</p>
+                </div>
+                <div className="flex gap-2">
+                  <input value={joinCode} onChange={(event) => setJoinCode(event.target.value)} placeholder="Enter join code" className="rounded-full border border-white/10 bg-slate-950/80 px-3 py-2 text-sm" />
+                  <button onClick={() => joinByCode('class')} className="rounded-full bg-indigo-600 px-3 py-2 text-sm">Join class</button>
+                  <button onClick={() => joinByCode('institute')} className="rounded-full bg-emerald-600 px-3 py-2 text-sm">Join institute</button>
+                </div>
+              </div>
+            </div>
+            {activeTab === 'home' && (
+              <div className="grid gap-4 xl:grid-cols-2">
+                <div className="glass rounded-3xl border border-white/10 p-5">
+                  <h3 className="text-lg font-semibold">My institutes</h3>
+                  <div className="mt-3 space-y-2">{visibleInstitutes.length ? visibleInstitutes.map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.name}</div><div className="text-sm text-slate-400">Code: {item.code}</div></div>) : <div className="text-sm text-slate-400">No institute joined yet.</div>}</div>
+                </div>
+                <div className="glass rounded-3xl border border-white/10 p-5">
+                  <h3 className="text-lg font-semibold">My batches</h3>
+                  <div className="mt-3 space-y-2">{visibleClasses.length ? visibleClasses.map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.name}</div><div className="text-sm text-slate-400">Fee: {item.fee} • Code: {item.code}</div></div>) : <div className="text-sm text-slate-400">No batch joined yet.</div>}</div>
+                </div>
+                <div className="glass rounded-3xl border border-white/10 p-5">
+                  <h3 className="text-lg font-semibold">Announcements & schedule</h3>
+                  <div className="mt-3 space-y-2">{announcements.length ? announcements.slice(0, 6).map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.title}</div><div className="text-sm text-slate-400">{item.message}</div></div>) : <div className="text-sm text-slate-400">No updates yet.</div>}</div>
+                </div>
+                <div className="glass rounded-3xl border border-white/10 p-5">
+                  <h3 className="text-lg font-semibold">Homework</h3>
+                  <div className="mt-3 space-y-2">{homeworks.length ? homeworks.slice(0, 4).map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.title}</div><div className="text-sm text-slate-400">Due: {item.dueDate}</div><button onClick={() => submitSelectedHomework(item.id)} className="mt-2 rounded-full bg-emerald-600 px-3 py-2 text-xs">Mark submitted</button></div>) : <div className="text-sm text-slate-400">No homework yet.</div>}</div>
+                </div>
+              </div>
+            )}
+            {activeTab === 'lectures' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Live lectures & recordings</h3><div className="mt-3 space-y-2">{announcements.length ? announcements.slice(0, 4).map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.title}</div><div className="text-sm text-slate-400">{item.message}</div></div>) : <div className="text-sm text-slate-400">No lecture updates yet.</div>}</div></div>}
+            {activeTab === 'notes' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Shared notes</h3><div className="mt-3 space-y-2">{notes.length ? notes.map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.title}</div><div className="text-sm text-slate-400">{item.content}</div></div>) : <div className="text-sm text-slate-400">No notes shared yet.</div>}</div></div>}
+            {activeTab === 'doubts' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Ask your doubt</h3><form onSubmit={saveDoubt} className="mt-3 space-y-3"><textarea value={doubtText} onChange={(event) => setDoubtText(event.target.value)} placeholder="Write your doubt here" className="min-h-24 w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><button className="rounded-full bg-indigo-600 px-3 py-2 text-sm">Send to teacher</button></form><div className="mt-4 space-y-2">{doubts.slice(0, 4).map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.question}</div><div className="text-sm text-slate-400">Status: {item.status}</div></div>)}</div></div>}
+            {activeTab === 'fees' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Fee status</h3><div className="mt-3 space-y-2">{fees.filter((item) => item.studentId === profile?.id).length ? fees.filter((item) => item.studentId === profile?.id).map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="flex items-center justify-between"><span>₹{item.amount}</span><span className="text-xs text-slate-400">{item.dueDate}</span></div></div>) : <div className="text-sm text-slate-400">Fee records will appear here.</div>}</div></div>}
+            {activeTab === 'profile' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Profile</h3><div className="mt-3 rounded-2xl border border-white/10 bg-slate-900/70 p-4"><div className="font-semibold">{profile?.name}</div><div className="text-sm text-slate-400">ID: {profile?.id}</div><div className="mt-2 text-sm text-slate-400">Joined classes: {visibleClasses.length}</div></div><div className="mt-4 grid gap-2 md:grid-cols-2">{marks.filter((item) => item.studentId === profile?.id).slice(0, 4).map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.title}</div><div className="text-sm text-slate-400">Score: {item.score}/{item.maxScore}</div></div>)}</div></div>}
+            <BottomNavBar items={tabs} active={activeTab} onChange={setActiveTab} />
+          </div>
+        </ScreenShell>
+      );
+    }
+
+    function TeacherDashboard() {
+      const { profile } = useAuth();
+      const { institutes, classes, joinRequests, homeworks, notes, doubts, feedbacks, createClass, createHomework, createNote, addFeedback, addDoubt } = useAppData();
+      const [activeTab, setActiveTab] = useState('home');
+      const [className, setClassName] = useState('');
+      const [subject, setSubject] = useState('');
+      const [fee, setFee] = useState('');
+      const [schedule, setSchedule] = useState('Weekly');
+      const [homeworkTitle, setHomeworkTitle] = useState('');
+      const [homeworkDesc, setHomeworkDesc] = useState('');
+      const [homeworkDue, setHomeworkDue] = useState('');
+      const [noteTitle, setNoteTitle] = useState('');
+      const [noteContent, setNoteContent] = useState('');
+      const [feedbackText, setFeedbackText] = useState('');
+      const [doubtText, setDoubtText] = useState('');
+      const { addToast } = useToast();
+      const approvedMemberships = joinRequests.filter((item) => item.requesterId === profile?.id && item.status === 'approved');
+      const visibleInstitutes = institutes.filter((item) => item.teacherIds?.includes(profile?.id) || approvedMemberships.some((req) => req.targetType === 'institute' && req.targetId === item.id) || item.id === profile?.instituteIds?.[0]);
+      const visibleClasses = classes.filter((item) => item.teacherIds?.includes(profile?.id) || approvedMemberships.some((req) => req.targetType === 'class' && req.targetId === item.id) || item.id === profile?.classIds?.[0]);
+      const visibleStudents = visibleClasses.flatMap((item) => item.studentIds?.map((id) => ({ id, classId: item.id, className: item.name })) || []);
+      const createNewClass = async (event) => {
+        event.preventDefault();
+        if (!className.trim()) return;
+        await createClass({ teacherId: profile.id, teacherName: profile.name, name: className, subject, fee, schedule, description: 'Created from teacher dashboard' });
+        addToast('Class created with a new join code', 'success');
+        setClassName('');
+        setSubject('');
+        setFee('');
+      };
+      const createNewHomework = async (event) => {
+        event.preventDefault();
+        if (!homeworkTitle.trim()) return;
+        await createHomework({ title: homeworkTitle, description: homeworkDesc, dueDate: homeworkDue, classId: visibleClasses[0]?.id || null, instituteId: visibleInstitutes[0]?.id || null, createdBy: profile.name });
+        addToast('Homework assigned', 'success');
+        setHomeworkTitle('');
+        setHomeworkDesc('');
+        setHomeworkDue('');
+      };
+      const shareNote = async (event) => {
+        event.preventDefault();
+        if (!noteTitle.trim()) return;
+        await createNote({ title: noteTitle, content: noteContent, classId: visibleClasses[0]?.id || null, instituteId: visibleInstitutes[0]?.id || null, createdBy: profile.name });
+        addToast('Note shared with students', 'success');
+        setNoteTitle('');
+        setNoteContent('');
+      };
+      const giveFeedback = async (event) => {
+        event.preventDefault();
+        if (!feedbackText.trim()) return;
+        const studentId = visibleStudents[0]?.id;
+        if (!studentId) return addToast('No student is linked to this teacher yet.', 'error');
+        await addFeedback({ text: feedbackText, studentId, teacherId: profile.id, classId: visibleClasses[0]?.id || null, instituteId: visibleInstitutes[0]?.id || null });
+        setFeedbackText('');
+        addToast('Feedback saved', 'success');
+      };
+      const sendDoubt = async (event) => {
+        event.preventDefault();
+        if (!doubtText.trim()) return;
+        await addDoubt({ question: doubtText, studentId: profile.id, studentName: profile.name, classId: visibleClasses[0]?.id || null, instituteId: visibleInstitutes[0]?.id || null });
+        setDoubtText('');
+        addToast('Doubt shared with the team', 'success');
+      };
+      const tabs = [
+        { id: 'home', label: 'Home', icon: '🏠' },
+        { id: 'classes', label: 'Classes', icon: '📚' },
+        { id: 'homework', label: 'Homework', icon: '📝' },
+        { id: 'notes', label: 'Notes', icon: '📄' },
+        { id: 'doubts', label: 'Doubts', icon: '🤖' },
+        { id: 'feedback', label: 'Feedback', icon: '💬' }
+      ];
+      return (
+        <ScreenShell title="Teacher dashboard" subtitle="All teacher tools are available from the bottom bar." right={<div className="rounded-full border border-indigo-400/20 bg-indigo-500/10 px-3 py-2 text-sm text-indigo-200">{profile?.name || 'Teacher'}</div>}>
+          <div className="space-y-5">
+            <div className="glass rounded-3xl border border-white/10 p-5">
+              <h2 className="text-xl font-semibold">My teaching groups</h2>
+              <div className="mt-3 grid gap-3 md:grid-cols-2">{visibleClasses.length ? visibleClasses.map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.name}</div><div className="text-sm text-slate-400">Code: {item.code} • Students: {item.studentIds?.length || 0}</div></div>) : <div className="text-sm text-slate-400">Create a class to start teaching.</div>}</div>
+            </div>
+            {activeTab === 'home' && <div className="grid gap-4 xl:grid-cols-2"><div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Create a new class</h3><form onSubmit={createNewClass} className="mt-3 grid gap-3 md:grid-cols-2"><input value={className} onChange={(event) => setClassName(event.target.value)} placeholder="Class name" required className="rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><input value={subject} onChange={(event) => setSubject(event.target.value)} placeholder="Subject" className="rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><input value={fee} onChange={(event) => setFee(event.target.value)} placeholder="Fee" className="rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><input value={schedule} onChange={(event) => setSchedule(event.target.value)} placeholder="Schedule" className="rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><button className="md:col-span-2 rounded-2xl bg-indigo-600 px-3 py-3 text-sm font-semibold">Create class</button></form></div><div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Students in your groups</h3><div className="mt-3 space-y-2">{visibleStudents.length ? visibleStudents.map((item) => <div key={`${item.id}-${item.classId}`} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.id}</div><div className="text-sm text-slate-400">{item.className}</div></div>) : <div className="text-sm text-slate-400">Students will appear once they join your class.</div>}</div></div></div>}
+            {activeTab === 'classes' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Class management</h3><div className="mt-3 space-y-2">{visibleClasses.map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.name}</div><div className="text-sm text-slate-400">Fee: {item.fee} • Schedule: {item.schedule}</div></div>)}</div></div>}
+            {activeTab === 'homework' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Assign homework</h3><form onSubmit={createNewHomework} className="mt-3 space-y-3"><input value={homeworkTitle} onChange={(event) => setHomeworkTitle(event.target.value)} placeholder="Homework title" required className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><textarea value={homeworkDesc} onChange={(event) => setHomeworkDesc(event.target.value)} placeholder="Description" className="min-h-24 w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><input value={homeworkDue} onChange={(event) => setHomeworkDue(event.target.value)} placeholder="Due date" className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><button className="rounded-full bg-emerald-600 px-3 py-2 text-sm">Assign to class</button></form><div className="mt-4 space-y-2">{homeworks.slice(0, 4).map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.title}</div><div className="text-sm text-slate-400">Due: {item.dueDate}</div></div>)}</div></div>}
+            {activeTab === 'notes' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Share notes</h3><form onSubmit={shareNote} className="mt-3 space-y-3"><input value={noteTitle} onChange={(event) => setNoteTitle(event.target.value)} placeholder="Note title" required className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><textarea value={noteContent} onChange={(event) => setNoteContent(event.target.value)} placeholder="Note content" className="min-h-24 w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><button className="rounded-full bg-indigo-600 px-3 py-2 text-sm">Share note</button></form><div className="mt-4 space-y-2">{notes.slice(0, 4).map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.title}</div><div className="text-sm text-slate-400">{item.content}</div></div>)}</div></div>}
+            {activeTab === 'doubts' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Doubts & support</h3><form onSubmit={sendDoubt} className="mt-3 space-y-3"><textarea value={doubtText} onChange={(event) => setDoubtText(event.target.value)} placeholder="Share a student concern" className="min-h-24 w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><button className="rounded-full bg-indigo-600 px-3 py-2 text-sm">Post to support</button></form><div className="mt-4 space-y-2">{doubts.slice(0, 4).map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.question}</div><div className="text-sm text-slate-400">Status: {item.status}</div></div>)}</div></div>}
+            {activeTab === 'feedback' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Feedback</h3><form onSubmit={giveFeedback} className="mt-3 space-y-2"><textarea value={feedbackText} onChange={(event) => setFeedbackText(event.target.value)} placeholder="Add feedback for a student" className="min-h-20 w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><button className="rounded-full bg-amber-500 px-3 py-2 text-sm">Save feedback</button></form><div className="mt-4 space-y-2">{feedbacks.slice(0, 4).map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.text}</div></div>)}</div></div>}
+            <BottomNavBar items={tabs} active={activeTab} onChange={setActiveTab} />
+          </div>
+        </ScreenShell>
+      );
+    }
+
+    function OwnerDashboard() {
+      const { profile } = useAuth();
+      const { institutes, classes, joinRequests, announcements, fees, schedules, createInstitute, createClass, createAnnouncement, createFee, approveRequest, rejectRequest } = useAppData();
+      const [activeTab, setActiveTab] = useState('overview');
+      const [instituteName, setInstituteName] = useState('');
+      const [city, setCity] = useState('Pune');
+      const [className, setClassName] = useState('');
+      const [subject, setSubject] = useState('');
+      const [fee, setFee] = useState('');
+      const [scheduleText, setScheduleText] = useState('');
+      const [selectedInstitute, setSelectedInstitute] = useState('');
+      const [selectedClass, setSelectedClass] = useState('');
+      const [announcementTitle, setAnnouncementTitle] = useState('');
+      const [announcementBody, setAnnouncementBody] = useState('');
+      const { addToast } = useToast();
+      const myInstitutes = institutes.filter((item) => item.ownerId === profile?.id);
+      const relevantRequests = [...joinRequests].filter((item) => myInstitutes.some((institute) => institute.id === item.targetId) || classes.some((cls) => cls.ownerId === profile?.id && cls.id === item.targetId)).sort((a, b) => Number(b.status === 'pending') - Number(a.status === 'pending'));
+      const addInstitute = async (event) => {
+        event.preventDefault();
+        if (!instituteName.trim()) return;
+        await createInstitute({ name: instituteName, city, description: 'Institute created from owner dashboard', ownerId: profile.id, ownerName: profile.name });
+        addToast('Institute created', 'success');
+        setInstituteName('');
+      };
+      const addClass = async (event) => {
+        event.preventDefault();
+        if (!className.trim()) return;
+        await createClass({ instituteId: selectedInstitute || null, ownerId: profile.id, name: className, subject, fee, schedule: scheduleText || 'Weekly', description: 'Batch created from owner dashboard' });
+        addToast('Batch created', 'success');
+        setClassName('');
+        setSubject('');
+        setFee('');
+      };
+      const sendAnnouncement = async (event) => {
+        event.preventDefault();
+        if (!announcementTitle.trim()) return;
+        await createAnnouncement({ title: announcementTitle, message: announcementBody, instituteId: selectedInstitute || null, classId: selectedClass || null, createdBy: profile.name });
+        addToast('Notification sent', 'success');
+        setAnnouncementTitle('');
+        setAnnouncementBody('');
+      };
+      const addNewFee = async (event) => {
+        event.preventDefault();
+        await createFee({ studentId: profile.id, studentName: profile.name, classId: selectedClass || null, amount: fee, dueDate: '2026-08-01' });
+        addToast('Fee reminder created', 'success');
+      };
+      const tabs = [
+        { id: 'overview', label: 'Overview', icon: '🏢' },
+        { id: 'requests', label: 'Requests', icon: '📩' },
+        { id: 'batches', label: 'Batches', icon: '📚' },
+        { id: 'announcements', label: 'Alerts', icon: '📢' },
+        { id: 'fees', label: 'Fees', icon: '💰' },
+        { id: 'settings', label: 'Settings', icon: '⚙️' }
+      ];
+      return (
+        <ScreenShell title="Owner dashboard" subtitle="Owner tools are now grouped in the bottom navigation." right={<div className="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">{profile?.name || 'Owner'}</div>}>
+          <div className="space-y-5">
+            <div className="glass rounded-3xl border border-white/10 p-5">
+              <h2 className="text-xl font-semibold">Institute overview</h2>
+              <div className="mt-3 grid gap-3 md:grid-cols-3">{myInstitutes.length ? myInstitutes.map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.name}</div><div className="text-sm text-slate-400">Code: {item.code}</div></div>) : <div className="text-sm text-slate-400">Create an institute first.</div>}<div className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">Pending</div><div className="text-sm text-slate-400">{relevantRequests.filter((item) => item.status === 'pending').length} approvals</div></div></div>
+            </div>
+            {activeTab === 'overview' && <div className="grid gap-4 xl:grid-cols-2"><div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Create institute</h3><form onSubmit={addInstitute} className="mt-3 space-y-3"><input value={instituteName} onChange={(event) => setInstituteName(event.target.value)} placeholder="Institute name" required className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><input value={city} onChange={(event) => setCity(event.target.value)} placeholder="City" className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><button className="rounded-full bg-indigo-600 px-3 py-2 text-sm">Create institute</button></form></div><div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Announcements</h3><div className="mt-3 space-y-2">{announcements.slice(0, 4).map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.title}</div><div className="text-sm text-slate-400">{item.message}</div></div>)}</div></div></div>}
+            {activeTab === 'requests' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Pending approvals</h3><div className="mt-3 space-y-2">{relevantRequests.length ? relevantRequests.map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.requesterName} wants to join</div><div className="text-sm text-slate-400">{item.targetName}</div>{item.status === 'pending' ? <div className="mt-2 flex gap-2"><button onClick={() => approveRequest(item.id)} className="rounded-full bg-emerald-600 px-3 py-2 text-xs">Approve</button><button onClick={() => rejectRequest(item.id)} className="rounded-full bg-rose-500 px-3 py-2 text-xs">Reject</button></div> : <div className="mt-2 text-xs font-medium text-emerald-400">{item.status === 'approved' ? 'Approved' : 'Rejected'}</div>}</div>) : <div className="text-sm text-slate-400">No requests yet.</div>}</div></div>}
+            {activeTab === 'batches' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Create batch</h3><form onSubmit={addClass} className="mt-3 space-y-3"><select value={selectedInstitute} onChange={(event) => setSelectedInstitute(event.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm"><option value="">Select institute</option>{myInstitutes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select><input value={className} onChange={(event) => setClassName(event.target.value)} placeholder="Batch name" required className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><input value={subject} onChange={(event) => setSubject(event.target.value)} placeholder="Subject" className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><input value={fee} onChange={(event) => setFee(event.target.value)} placeholder="Fee" className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><input value={scheduleText} onChange={(event) => setScheduleText(event.target.value)} placeholder="Schedule" className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><button className="rounded-full bg-emerald-600 px-3 py-2 text-sm">Create batch</button></form><div className="mt-4 space-y-2">{classes.filter((item) => item.ownerId === profile?.id).slice(0, 6).map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.name}</div><div className="text-sm text-slate-400">Fee: {item.fee} • Code: {item.code}</div></div>)}</div></div>}
+            {activeTab === 'announcements' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Send notification</h3><form onSubmit={sendAnnouncement} className="mt-3 space-y-3"><input value={announcementTitle} onChange={(event) => setAnnouncementTitle(event.target.value)} placeholder="Title" required className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><textarea value={announcementBody} onChange={(event) => setAnnouncementBody(event.target.value)} placeholder="Message" className="min-h-24 w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><select value={selectedClass} onChange={(event) => setSelectedClass(event.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm"><option value="">All batches</option>{classes.filter((item) => item.ownerId === profile?.id).map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select><button className="rounded-full bg-indigo-600 px-3 py-2 text-sm">Send notification</button></form></div>}
+            {activeTab === 'fees' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Fee reminders</h3><form onSubmit={addNewFee} className="mt-3 space-y-3"><input value={fee} onChange={(event) => setFee(event.target.value)} placeholder="Fee amount" className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-3 py-3 text-sm" /><button className="rounded-full bg-amber-500 px-3 py-2 text-sm">Create reminder</button></form><div className="mt-4 space-y-2">{fees.slice(0, 6).map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">₹{item.amount}</div><div className="text-sm text-slate-400">Due: {item.dueDate} • {item.studentName}</div></div>)}</div></div>}
+            {activeTab === 'settings' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Settings</h3><div className="mt-3 rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-sm text-slate-300">Owner controls are now directly available from the bottom bar for institute, batch, alert and fee management.</div></div>}
+            <BottomNavBar items={tabs} active={activeTab} onChange={setActiveTab} />
+          </div>
+        </ScreenShell>
+      );
+    }
+
+    function ParentDashboard() {
+      const { profile } = useAuth();
+      const { users, fees, announcements, marks } = useAppData();
+      const [activeTab, setActiveTab] = useState('overview');
+      const child = users.find((item) => item.id === profile?.childId || item.parentId === profile?.id) || null;
+      const tabs = [
+        { id: 'overview', label: 'Overview', icon: '👪' },
+        { id: 'progress', label: 'Progress', icon: '📊' },
+        { id: 'attendance', label: 'Attendance', icon: '📅' },
+        { id: 'fees', label: 'Fees', icon: '💰' },
+        { id: 'contact', label: 'Contact', icon: '💬' }
+      ];
+      return (
+        <ScreenShell title="Parent dashboard" subtitle="Track your child's learning journey from one place." right={<div className="rounded-full border border-amber-400/20 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">{profile?.name || 'Parent'}</div>}>
+          <div className="space-y-5">
+            <div className="glass rounded-3xl border border-white/10 p-5">
+              <h2 className="text-xl font-semibold">Child overview</h2>
+              <div className="mt-3 rounded-2xl border border-white/10 bg-slate-900/70 p-3">
+                <div className="font-medium">{child?.name || 'No linked child yet'}</div>
+                <div className="text-sm text-slate-400">{child?.role || 'Pending'}</div>
+              </div>
+            </div>
+            {activeTab === 'overview' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Recent notices</h3><div className="mt-3 space-y-2">{announcements.slice(0, 4).map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.title}</div><div className="text-sm text-slate-400">{item.message}</div></div>)}</div></div>}
+            {activeTab === 'progress' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Performance</h3><div className="mt-3 space-y-2">{marks.filter((item) => item.studentId === child?.id).slice(0, 4).map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">{item.title}</div><div className="text-sm text-slate-400">Score: {item.score}/{item.maxScore}</div></div>)}</div></div>}
+            {activeTab === 'attendance' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Attendance summary</h3><div className="mt-3 rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-sm text-slate-300">Attendance updates and class presence are tracked automatically for the linked child.</div></div>}
+            {activeTab === 'fees' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Fees & notices</h3><div className="mt-3 space-y-2">{fees.filter((item) => item.studentId === child?.id).map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-3"><div className="font-medium">₹{item.amount}</div><div className="text-sm text-slate-400">{item.dueDate}</div></div>)}</div></div>}
+            {activeTab === 'contact' && <div className="glass rounded-3xl border border-white/10 p-5"><h3 className="text-lg font-semibold">Contact support</h3><div className="mt-3 rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-sm text-slate-300">Use the institute owner and teacher contact routes from inside the main app to reach the team quickly.</div></div>}
+            <BottomNavBar items={tabs} active={activeTab} onChange={setActiveTab} />
+          </div>
+        </ScreenShell>
+      );
+    }
+
+    function AppRouter() {
+      const { currentPath } = useNav();
+      const { profile, loading } = useAuth();
+      const isPublicRoute = currentPath === '/discover' || currentPath === '/' || currentPath === '';
+      const isAuthRoute = currentPath === '/auth' || currentPath === '/login' || currentPath === '/signup';
+
+      if (loading) return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-slate-100">Loading your workspace...</div>;
+      if (isAuthRoute) return <AuthScreen />;
+      if (!profile) return <DiscoverScreen />;
+      if (isPublicRoute) return <DiscoverScreen />;
+      if (currentPath === '/owner') return <OwnerDashboard />;
+      if (currentPath === '/teacher') return <TeacherDashboard />;
+      if (currentPath === '/parent') return <ParentDashboard />;
+      if (currentPath === '/student' || currentPath.startsWith('/student')) return <StudentDashboard />;
+      return <StudentDashboard />;
+    }
+
+    function App() {
+      return (
+        <ThemeProvider>
+          <NavProvider>
+            <ToastProvider>
+              <AppDataProvider>
+                <AuthProvider>
+                  <AppRouter />
+                </AuthProvider>
+              </AppDataProvider>
+            </ToastProvider>
+          </NavProvider>
+        </ThemeProvider>
+      );
+    }
+
+    createRoot(document.getElementById('root')).render(<App />);
+  </script>
 </body>
 </html>
